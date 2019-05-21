@@ -1,0 +1,6 @@
+[General]
+flag=.\\config\\canOrder_FtreeDabeBase_Config.dat
+lineEdit_dat=.\\config\\text.dat
+lineEdit_excel=.\\config\\text.xlsx
+lineEdit_key=KEY
+spinBox_FindKeyColumn=1

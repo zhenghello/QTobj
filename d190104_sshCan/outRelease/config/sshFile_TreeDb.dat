@@ -1,0 +1,19 @@
+%% columnCount                          %% 6                                    
+%% columnWidth                          %% 100                                  %% 300                                  %% 300                                  %% 20                                   %% 20                                   %% 20                                   
+%% headerItemText                       %% 下载类型                             %% 源地址->下载文件                     %% 本机地址-上传文件                    %% +                                    %% -                                    %% C                                    
+%% 0                                    %% test                                 
+%% 0                                    %% test                                 
+%% 0                                    %% test                                 
+%% 0                                    %% test                                 
+%% 0                                    %% test                                 
+%% 0                                    %% test                                 
+%% 0                                    %% test                                 
+%% 001                                  %%                                      %%                                      %%                                      %%                                      %%                                      %%                                      
+%% 002                                  %% F                                    %% /dymind/app/DM_1114/config/motor.xml %% ./motor.xml                          %%                                      %%                                      %%                                      
+%% 002                                  %% D                                    %% /dymind/app/DM_1114/config/          %% ./config2/                           %%                                      %%                                      %%                                      
+%% 002                                  %%                                      %%                                      %%                                      %%                                      %%                                      %%                                      
+%% 002                                  %% F                                    %% /test.txt                            %% ./test.txt                           %%                                      %%                                      %%                                      
+%% 002                                  %% D                                    %% /sddisk/log/                         %% ./ssh_file/log_ssh/                  %%                                      %%                                      %%                                      
+%% 002                                  %% F                                    %% /sddisk/log/hostapp.log              %% ./log.txt                            %%                                      %%                                      %%                                      
+%% 002                                  %% D                                    %% /sddisk/log/                         %% ./ssh_file/                          %%                                      %%                                      %%                                      
+%% 001                                  %% new2                                 %%                                      

@@ -1,0 +1,462 @@
+
+DLLDESTDIR = $$PWD/../../../../bin
+DESTDIR = $$PWD/../../../release/lib
+
+TEMPLATE = lib
+TARGET = QSsh
+QT += network
+DEFINES += QSSH_LIBRARY
+
+LIBS += -L$$PWD/../../../../Botan-2.8.0/release/lib/ -lbotan-2
+
+#Enable debug log
+#DEFINES += CREATOR_SSH_DEBUG
+
+INCLUDEPATH += $$PWD/../../../../Botan-2.8.0/release/include/botan-2 \
+               $$PWD/../../../../Botan-2.8.0/build/include
+
+include(../../qtcreatorlibrary.pri)
+
+SOURCES = $$PWD/sshsendfacility.cpp \
+    $$PWD/sshremoteprocess.cpp \
+    $$PWD/sshpacketparser.cpp \
+    $$PWD/sshpacket.cpp \
+    $$PWD/sshoutgoingpacket.cpp \
+    $$PWD/sshkeygenerator.cpp \
+    $$PWD/sshkeyexchange.cpp \
+    $$PWD/sshincomingpacket.cpp \
+    $$PWD/sshcryptofacility.cpp \
+    $$PWD/sshconnection.cpp \
+    $$PWD/sshchannelmanager.cpp \
+    $$PWD/sshchannel.cpp \
+    $$PWD/sshcapabilities.cpp \
+    $$PWD/sftppacket.cpp \
+    $$PWD/sftpoutgoingpacket.cpp \
+    $$PWD/sftpoperation.cpp \
+    $$PWD/sftpincomingpacket.cpp \
+    $$PWD/sftpdefs.cpp \
+    $$PWD/sftpchannel.cpp \
+    $$PWD/sshremoteprocessrunner.cpp \
+    $$PWD/sshconnectionmanager.cpp \
+    $$PWD/sshkeypasswordretriever.cpp \
+    $$PWD/sftpfilesystemmodel.cpp
+
+HEADERS = $$PWD/sshsendfacility_p.h \
+    $$PWD/sshremoteprocess.h \
+    $$PWD/sshremoteprocess_p.h \
+    $$PWD/sshpacketparser_p.h \
+    $$PWD/sshpacket_p.h \
+    $$PWD/sshoutgoingpacket_p.h \
+    $$PWD/sshkeygenerator.h \
+    $$PWD/sshkeyexchange_p.h \
+    $$PWD/sshincomingpacket_p.h \
+    $$PWD/sshexception_p.h \
+    $$PWD/ssherrors.h \
+    $$PWD/sshcryptofacility_p.h \
+    $$PWD/sshconnection.h \
+    $$PWD/sshconnection_p.h \
+    $$PWD/sshchannelmanager_p.h \
+    $$PWD/sshchannel_p.h \
+    $$PWD/sshcapabilities_p.h \
+    $$PWD/sshbotanconversions_p.h \
+    $$PWD/sftppacket_p.h \
+    $$PWD/sftpoutgoingpacket_p.h \
+    $$PWD/sftpoperation_p.h \
+    $$PWD/sftpincomingpacket_p.h \
+    $$PWD/sftpdefs.h \
+    $$PWD/sftpchannel.h \
+    $$PWD/sftpchannel_p.h \
+    $$PWD/sshremoteprocessrunner.h \
+    $$PWD/sshconnectionmanager.h \
+    $$PWD/sshpseudoterminal.h \
+    $$PWD/sshkeypasswordretriever_p.h \
+    $$PWD/sftpfilesystemmodel.h \
+    $$PWD/ssh_global.h
+
+SOURCES += D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/alg_id.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/asn1_attribute.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/asn1_obj.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/asn1_oid.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/asn1_print.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/asn1_str.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/asn1_time.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/ber_dec.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/der_enc.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/oid_maps.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/asn1/oids.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/base/scan_name.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/base/sym_algo.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/base/symkey.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/aes/aes.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/aes/aes_ni/aes_ni.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/aria/aria.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/block_cipher.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/blowfish/blowfish.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/camellia/camellia.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/cascade/cascade.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/cast128/cast128.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/cast256/cast256.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/des/des.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/des/des_tab.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/des/desx.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/gost_28147/gost_28147.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/idea/idea.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/idea/idea_sse2/idea_sse2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/kasumi/kasumi.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/lion/lion.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/misty1/misty1.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/noekeon/noekeon.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/seed/seed.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/serpent/serpent.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/shacal2/shacal2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/shacal2/shacal2_x86/shacal2_x86.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/sm4/sm4.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/threefish_512/threefish_512.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/threefish_512/threefish_512_avx2/threefish_512_avx2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/twofish/twofish.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/twofish/twofish_tab.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/xtea/xtea.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/codec/base32/base32.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/codec/base64/base64.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/codec/hex/hex.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/entropy/entropy_srcs.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/entropy/rdrand/rdrand.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/entropy/rdseed/rdseed.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/entropy/win32_stats/es_win32.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_block.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_cert.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_cipher.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_fpe.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_hash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_hotp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_kdf.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_keywrap.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_mac.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_mp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_pk_op.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_pkey.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_pkey_algs.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_rng.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/ffi/ffi_totp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/algo_filt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/basefilt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/buf_filt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/cipher_filter.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/codec_filt/b64_filt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/codec_filt/hex_filt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/comp_filter.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/data_snk.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/filter.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/key_filt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/out_buf.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/pipe.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/pipe_io.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/pipe_rw.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/secqueue.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/filters/threaded_fork.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/blake2/blake2b.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/checksum/adler32/adler32.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/checksum/crc24/crc24.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/checksum/crc32/crc32.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/comb4p/comb4p.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/gost_3411/gost_3411.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/hash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/keccak/keccak.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/md4/md4.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/md5/md5.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/mdx_hash/mdx_hash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/par_hash/par_hash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/rmd160/rmd160.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sha1/sha160.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sha1/sha1_sse2/sha1_sse2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sha1/sha1_x86/sha1_x86.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sha2_32/sha2_32.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sha2_32/sha2_32_bmi2/sha2_32_bmi2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sha2_32/sha2_32_x86/sha2_32_x86.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sha2_64/sha2_64.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sha3/sha3.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/shake/shake.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/skein/skein_512.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/sm3/sm3.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/streebog/streebog.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/streebog/streebog_precalc.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/tiger/tig_tab.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/tiger/tiger.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/whirlpool/whirlpool.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/hash/whirlpool/whrl_tab.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/hkdf/hkdf.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/kdf.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/kdf1/kdf1.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/kdf1_iso18033/kdf1_iso18033.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/kdf2/kdf2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/prf_tls/prf_tls.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/prf_x942/prf_x942.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/sp800_108/sp800_108.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/sp800_56a/sp800_56a.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/kdf/sp800_56c/sp800_56c.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/mac/cbc_mac/cbc_mac.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/mac/cmac/cmac.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/mac/gmac/gmac.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/mac/hmac/hmac.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/mac/mac.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/mac/poly1305/poly1305.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/mac/siphash/siphash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/mac/x919_mac/x919_mac.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/bigint/big_code.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/bigint/big_io.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/bigint/big_ops2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/bigint/big_ops3.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/bigint/big_rand.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/bigint/bigint.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/bigint/divide.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/mp/mp_comba.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/mp/mp_core.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/mp/mp_karat.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/mp/mp_monty.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/mp/mp_monty_n.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/dsa_gen.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/jacobi.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/make_prm.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/monty.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/monty_exp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/mp_numth.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/nistp_redc.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/numthry.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/pow_mod.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/powm_fw.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/powm_mnt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/primality.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/primes.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/reducer.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/math/numbertheory/ressol.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/aont/package.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/cryptobox/cryptobox.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/fpe_fe1/fpe_fe1.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/hotp/hotp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/hotp/totp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/nist_keywrap/nist_keywrap.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/rfc3394/rfc3394.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/srp6/srp6.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/misc/tss/tss.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/aead.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/ccm/ccm.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/chacha20poly1305/chacha20poly1305.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/eax/eax.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/gcm/clmul/clmul.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/gcm/clmul_ssse3/clmul_ssse3.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/gcm/gcm.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/gcm/ghash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/ocb/ocb.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/aead/siv/siv.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/cbc/cbc.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/cfb/cfb.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/cipher_mode.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/mode_pad/mode_pad.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/modes/xts/xts.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/passhash/bcrypt/bcrypt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/passhash/passhash9/passhash9.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pbkdf/pbkdf.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pbkdf/pbkdf1/pbkdf1.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pbkdf/pbkdf2/pbkdf2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pbkdf/pgp_s2k/pgp_s2k.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pbkdf/pwdhash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pbkdf/scrypt/scrypt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/eme.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/eme_oaep/oaep.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/eme_pkcs1/eme_pkcs.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/eme_raw/eme_raw.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/emsa.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/emsa1/emsa1.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/emsa_pkcs1/emsa_pkcs1.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/emsa_pssr/pssr.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/emsa_raw/emsa_raw.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/emsa_x931/emsa_x931.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/hash_id/hash_id.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/iso9796/iso9796.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/mgf1/mgf1.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pk_pad/padding.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_ecc_key.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_ecdh.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_ecdsa.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_mechanism.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_module.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_object.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_randomgenerator.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_rsa.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_session.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_slot.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/prov/pkcs11/p11_x509.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/psk_db/psk_db.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/psk_db/psk_db_sql.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/blinding.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/cecpq1/cecpq1.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/curve25519/curve25519.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/curve25519/donna.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/dh/dh.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/dl_algo/dl_algo.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/dl_group/dl_group.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/dl_group/dl_named.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/dlies/dlies.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/dsa/dsa.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ec_group/curve_gfp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ec_group/ec_group.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ec_group/ec_named.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ec_group/point_gfp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ec_group/point_mul.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ecc_key/ecc_key.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ecdh/ecdh.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ecdsa/ecdsa.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ecgdsa/ecgdsa.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ecies/ecies.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/eckcdsa/eckcdsa.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ed25519/ed25519.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ed25519/ed25519_fe.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ed25519/ed25519_key.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ed25519/ge.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ed25519/sc_muladd.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/ed25519/sc_reduce.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/elgamal/elgamal.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/gost_3410/gost_3410.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/keypair/keypair.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mce/code_based_key_gen.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mce/gf2m_rootfind_dcmp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mce/gf2m_small_m.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mce/goppa_code.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mce/mce_workfactor.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mce/mceliece.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mce/mceliece_key.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mce/polyn_gf2m.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/mceies/mceies.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/newhope/newhope.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/pbes2/pbes2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/pem/pem.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/pk_algs.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/pk_keys.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/pk_ops.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/pkcs8.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/pubkey.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/rfc6979/rfc6979.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/rsa/rsa.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/sm2/sm2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/sm2/sm2_enc.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/workfactor.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/x509_key.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_common_ops.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_hash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_index_registry.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_parameters.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_privatekey.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_publickey.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_signature.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_signature_operation.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_tools.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_verification_operation.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_wots_parameters.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_wots_privatekey.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/pubkey/xmss/xmss_wots_publickey.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/rng/auto_rng/auto_rng.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/rng/chacha_rng/chacha_rng.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/rng/hmac_drbg/hmac_drbg.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/rng/rdrand_rng/rdrand_rng.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/rng/rng.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/rng/stateful_rng/stateful_rng.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/rng/system_rng/system_rng.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/chacha/chacha.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/chacha/chacha_avx2/chacha_avx2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/chacha/chacha_sse2/chacha_sse2.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/ctr/ctr.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/ofb/ofb.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/rc4/rc4.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/salsa20/salsa20.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/shake_cipher/shake_cipher.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/stream/stream_cipher.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/credentials_manager.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_cert_req.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_cert_status.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_cert_verify.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_certificate.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_client_hello.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_client_kex.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_finished.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_hello_verify.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_server_hello.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_server_kex.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/msg_session_ticket.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/sessions_sql/tls_session_manager_sql.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_alert.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_algos.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_blocking.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_callbacks.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_cbc/tls_cbc.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_channel.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_ciphersuite.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_client.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_extensions.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_handshake_hash.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_handshake_io.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_handshake_state.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_policy.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_record.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_server.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_session.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_session_key.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_session_manager_memory.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_suite_info.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_text_policy.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/tls/tls_version.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/assert.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/calendar.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/charset.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/cpuid/cpuid.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/cpuid/cpuid_arm.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/cpuid/cpuid_ppc.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/cpuid/cpuid_x86.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/data_src.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/dyn_load/dyn_load.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/exceptn.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/filesystem.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/http_util/http_util.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/locking_allocator/locking_allocator.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/mem_ops.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/mem_pool/mem_pool.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/os_utils.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/parsing.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/poly_dbl/poly_dbl.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/read_cfg.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/read_kv.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/socket/socket.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/thread_utils/barrier.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/thread_utils/semaphore.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/timer.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/uuid/uuid.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/utils/version.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/asn1_alt_name.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/cert_status.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/certstor.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/certstor_sql/certstor_sql.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/crl_ent.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/datastor.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/key_constraint.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/name_constraint.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/ocsp.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/ocsp_types.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/pkcs10.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509_ca.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509_crl.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509_dn.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509_dn_ub.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509_ext.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509_obj.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509cert.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509opt.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509path.cpp \
+D:/KyoukoMonitor/Botan-2.8.0/src/lib/x509/x509self.cpp
+
+
+#D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/aes/aes_ssse3/aes_ssse3.cpp \
+#D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/noekeon/noekeon_simd/noekeon_simd.cpp \
+#D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/serpent/serpent_avx2/serpent_avx2.cpp \
+#D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/serpent/serpent_simd/serpent_simd.cpp \
+#D:/KyoukoMonitor/Botan-2.8.0/src/lib/block/shacal2/shacal2_simd/shacal2_simd.cpp \
