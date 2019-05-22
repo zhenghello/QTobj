@@ -111,7 +111,7 @@ bool canRecv::explain(QString str)
   len_qby.remove(2,1);   // 去掉‘]’
   len_qby.remove(0,1);   // 去掉‘[’
   id = id_str.toUInt(NULL,16);  // id号
-  len = len_qby.toUInt(); // 数据长度
+  len = len_qby.toUInt();       // 一个can帧的数据长度
   if(len != (list.size()-2))return false;//判断数据长度正确
   for(int i=0;i<len;i++)
   {
@@ -145,7 +145,12 @@ bool canRecv::explain(QString str)
     canDestID   = (id >> 16) & 0x1f;
     canSrcID    = (id >> 22) & 0x1f;
     canSign     = 1;  //进入接收状态
-    canNeedLen  = da.at(2).toUInt(NULL,16)+5;// 这个参数在试剂封闭板卡中有变动
+
+    canNeedLen  = da.at(2).toUInt(NULL,16)+5;// can包需要的长度
+    if(da.at(1)=="c4")  // 试剂封闭板卡主动上传的数据，这个长度占用了两个位
+    {
+        canNeedLen  = da.at(2).toUInt(NULL,16)*256+da.at(3).toUInt(NULL,16)+6;// 这个参数在试剂封闭板卡中有变动
+    }
   }
   // 3.2.已经在接收数据中
   else
@@ -175,8 +180,9 @@ bool canRecv::explain(QString str)
   // 3.3.1接收长度出错
   if(canNeedLen < canCurLen)
   {
+    qDebug()<<"canNeedLen="<<canNeedLen<<"canCurLen="<<canCurLen;
     emit canRevErr(3);
-    myShow->setTextStyle(QString::fromLocal8Bit("接收长度出错"),Qt::red,Qt::white,16);   // 出错
+    myShow->setTextStyle(QString::fromLocal8Bit("接收长度出错-"),Qt::red,Qt::white,16);   // 出错
     canSign = 0;//接收清空
     return false;
   }
@@ -274,6 +280,11 @@ void canRecv::translate(const QStringList strList)
     // 4.翻译“控制码”
     QTreeWidgetItem* treeCtlCode= NULL;
     treeCtlCode = findKeyTopTree(orderCodeAddr, 0, QString("0x")+strList.at(5));
+    if(strList.at(3)=="c4")  // --特殊--试剂封闭板卡主动上传的数据，这个长度占用了两个位
+    {
+        treeCtlCode = findKeyTopTree(orderCodeAddr, 0, QString("0x")+strList.at(6));
+    }
+
     if(treeCtlCode == NULL)
     {
         strResult += "NULL";
@@ -285,11 +296,23 @@ void canRecv::translate(const QStringList strList)
     strResult += "->";
     // 5.翻译“对象”
     strResult += "OBJ:";
-    strResult += strList.at(6);
+    if(strList.at(3)=="c4")  // --特殊--试剂封闭板卡主动上传的数据，这个长度占用了两个位
+    {
+        strResult += strList.at(7);
+    }
+    else
+    {
+        strResult += strList.at(6);
+
+    }
     strResult += "->";
     // 6.翻译“控制命令” - 这是在找到“控制码”的基础上完成的。
     QTreeWidgetItem* treeCtlOrder = NULL;
     treeCtlOrder = findKeyTopTree(treeCtlCode, 0, QString("0x")+strList.at(7));
+    if(strList.at(3)=="c4")  // --特殊--试剂封闭板卡主动上传的数据，这个长度占用了两个位
+    {
+        treeCtlOrder = findKeyTopTree(treeCtlCode, 0, QString("0x")+strList.at(8));
+    }
     if(treeCtlOrder == NULL)
     {
         strResult += "NULL";
@@ -409,7 +432,7 @@ void canRecv::translate(const QStringList strList)
     }
     // 7.3.翻译“回复码参数”
     QTreeWidgetItem* treeRepArg;    // REP附带参数的Tree地址
-    if(strList.at(3).toLower() == "c0")
+    if((strList.at(3).toLower() == "c0")||(strList.at(3).toLower() == "c4"))
     {
         strResult += "Arg::";
         // 没有附带参数的话，该excel文件中的命令码下就没有"rep"的子项目
@@ -417,6 +440,10 @@ void canRecv::translate(const QStringList strList)
         if(treeRepArg != NULL)
         {   // 要把所有子对象都遍历一次
             int curArgIndex = 7;    // 当前的子参数的偏移个数
+            if(strList.at(3)=="c4")  // --特殊--试剂封闭板卡主动上传的数据，这个长度占用了两个位
+            {
+                curArgIndex = 8;
+            }
             for(int i=0;i<treeRepArg->childCount();i++)
             {
                 // 获取需要的参数个数
