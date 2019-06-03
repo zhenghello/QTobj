@@ -30,6 +30,9 @@ private slots:
     void showSshCloseMsg(){myShow->setTextStyle(QString("canRecv SSH is Close->")+windowTitle(),Qt::red,Qt::white,16);}
     void fileTreeOperate(QTreeWidgetItem *tree,int column);  // 文件相关的树形点击对应 操作
 
+    void on_button_reboot_clicked();
+
+
 signals:
     void sFtpFinished(QSsh::SftpJobId job, const QString &error);// FTP文件操作结束信号
 private:

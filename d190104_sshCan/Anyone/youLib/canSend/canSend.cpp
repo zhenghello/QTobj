@@ -40,6 +40,25 @@ canSend::~canSend()
     dat_config_save();
     delete ui;
 }
+// 发送重启机器命令
+void canSend::on_button_reboot_clicked()
+{
+    if(sshPort->isConnected())
+    {
+        sshPort->sendSshCmd("sh /dymind/appStart.sh");   // 发送SSH命令
+        QTimer::singleShot(60000, sshPort, SLOT(closeSsh()));  // 1分钟后关闭ssh
+        QTimer::singleShot(62000, sshPort, SLOT(openSsh()));   // 再62秒后打开ssh
+//        QMessageBox msg(QMessageBox::NoIcon, QString("Please Wait"), QString("Please Wait reboot"));
+//        QTimer::singleShot(11000, &msg, SLOT(close()));     // 阻塞一段时间后触发,设置临时一个等待框
+//        msg.exec();
+    }
+    else
+    {
+        QMessageBox msg(QMessageBox::NoIcon, QString("NO Open SSH"), QString("NO Open SSH"));
+        QTimer::singleShot(1000, &msg, SLOT(close()));  // 阻塞一段时间后触发,设置临时一个等待框
+        msg.exec();
+    }
+}
 // 文件相关的树，发送出来的命令
 void canSend::fileTreeOperate(QTreeWidgetItem *tree,int column)
 {
@@ -240,4 +259,3 @@ void canSend::dat_config_load(void)
 
     load_config.endGroup();                            // 组操作------------------------------------------end
 }
-

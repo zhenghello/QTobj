@@ -966,7 +966,14 @@
          <item>
           <widget class="QPushButton" name="button_temp">
            <property name="text">
-            <string>温控调试-   没</string>
+            <string>温控调试-没</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button_reboot">
+           <property name="text">
+            <string>一键重启</string>
            </property>
           </widget>
          </item>
