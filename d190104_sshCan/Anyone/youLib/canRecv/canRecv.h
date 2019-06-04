@@ -9,6 +9,20 @@
 
 namespace Ui {class canRecv;}
 
+
+// 一个can包合成的过程数据，根据不同的源ID和目的ID接收，目的是防止接收的时候can被乱序。
+#define CAN_PACK_MAX_SIZE   5   // can包的数据个数
+class canPack_t
+{
+public:
+    QStringList     date      ;  // 保持的数据
+    uchar           destID    ;  // 目的ID
+    uchar           srcID     ;  // 源ID
+    uint            curLen    ;  // 当前的数据长度
+    uint            needLen   ;  // 需要的数据长度
+    uint            sign      ;  // 接收标志，0=空闲，1=正在接收中
+};
+
 class canRecv : public QWidget
 {
     Q_OBJECT
@@ -54,12 +68,13 @@ private:
     QTreeWidgetItem *orderCodeAddr; // 命令码的解释地址
     QTreeWidgetItem *errCodeAddr;   // 错误码的解释地址
 
-    QStringList     canDate      ;  // 保持的数据
-    uchar           canDestID    ;  // 目的ID
-    uchar           canSrcID     ;  // 源ID
-    uint            canCurLen    ;  // 当前的数据长度
-    uint            canNeedLen   ;  // 需要的数据长度
-    uint            canSign      ;  // 接收标志，0=空闲，1=正在接收中
+    canPack_t       canPackRec[CAN_PACK_MAX_SIZE];    // can包的数据，就先开辟20个缓存，会根据目的和源ID一致放在一起
+//    QStringList     canDate      ;  // 保持的数据
+//    uchar           canDestID    ;  // 目的ID
+//    uchar           canSrcID     ;  // 源ID
+//    uint            canCurLen    ;  // 当前的数据长度
+//    uint            canNeedLen   ;  // 需要的数据长度
+//    uint            canSign      ;  // 接收标志，0=空闲，1=正在接收中
 
     uint            reQuestNum   ;  // 请求帧个数
 

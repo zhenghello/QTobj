@@ -1,6 +1,0 @@
-[General]
-flag=.\\config\\dbTest_FtreeDabeBase_Config.dat
-lineEdit_dat=.\\config\\text.dat
-lineEdit_excel=./config/canExplain.xlsx
-lineEdit_key=0x03
-spinBox_FindKeyColumn=0

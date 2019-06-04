@@ -35,7 +35,6 @@ canRecv::canRecv(QWidget *parent, QString titleName) :QWidget(parent),ui(new Ui:
 
     //主显示框
     ui->tab_base->show();
-
 }
 
 canRecv::~canRecv()
@@ -75,8 +74,11 @@ void canRecv::initTreeDate(void)
         QMessageBox::warning(NULL, QString::fromLocal8Bit("出错"),QString::fromLocal8Bit("错误码类 出错"));
     }
     // 初始化标志位
-    canSign = 0;
-    reQuestNum = 0;
+    for(int ch=0;ch<CAN_PACK_MAX_SIZE;ch++)
+    {
+        canPackRec[ch].sign = 0;
+    }
+    reQuestNum = 0; // 请求帧个数
 }
 
 
@@ -100,7 +102,7 @@ bool canRecv::explain(QString str)
   if(str.at(15)!=']')return false;
   //2.抽出数据，按空格划分
   QStringList list=str.simplified().split(' ');
-  uint  id      ;   // * ID号
+  uint  id,destID,srcID      ;   // * ID号
   int  len     ;    // * 附带数据长度
   QStringList da ;  // * 数据
   QString id_str = list.at(0);
@@ -111,6 +113,9 @@ bool canRecv::explain(QString str)
   len_qby.remove(2,1);   // 去掉‘]’
   len_qby.remove(0,1);   // 去掉‘[’
   id = id_str.toUInt(NULL,16);  // id号
+  destID   = (id >> 16) & 0x1f;
+  srcID    = (id >> 22) & 0x1f;
+
   len = len_qby.toUInt();       // 一个can帧的数据长度
   if(len != (list.size()-2))return false;//判断数据长度正确
   for(int i=0;i<len;i++)
@@ -128,76 +133,69 @@ bool canRecv::explain(QString str)
       ui->label_requestNum->setText(QString("%1").arg(++reQuestNum,5,10,(QChar)'0'));
       return true;
   }
-  // 3.1.之前没有接收数据
-  if(canSign == 0)
+  // 3.1.判断之前有没有接收数据
+  int ch;
+  for(ch=0;ch<CAN_PACK_MAX_SIZE;ch++)
   {
-    // 头错误
-    if(da.at(0).toLower() != "aa")
-    {
-      emit canRevErr(1);
-      myShow->setTextStyle(QString::fromLocal8Bit("头错误"),Qt::red,Qt::white,16);   // 出错
-      return false;
-    }
-
-    canDate.clear();
-    canDate.append(da);
-    canCurLen   = len;
-    canDestID   = (id >> 16) & 0x1f;
-    canSrcID    = (id >> 22) & 0x1f;
-    canSign     = 1;  //进入接收状态
-
-    canNeedLen  = da.at(2).toUInt(NULL,16)+5;// can包需要的长度
-    if(da.at(1)=="c4")  // 试剂封闭板卡主动上传的数据，这个长度占用了两个位
-    {
-        canNeedLen  = da.at(2).toUInt(NULL,16)*256+da.at(3).toUInt(NULL,16)+6;// 这个参数在试剂封闭板卡中有变动
-    }
+      // 有正在接收的同样的ＩＤ的缓存，就继续
+      if((canPackRec[ch].sign == 1)&&(canPackRec[ch].destID == destID)&&(canPackRec[ch].srcID == srcID))break;
   }
-  // 3.2.已经在接收数据中
+  // 3.2.还没有缓存这个收发ID的数据
+  if(ch == CAN_PACK_MAX_SIZE)
+  {
+      // 判断头错误
+      if(da.at(0).toLower() != "aa")
+      {
+        emit canRevErr(1);
+        myShow->setTextStyle(QString::fromLocal8Bit("头错误"),Qt::red,Qt::white,16);   // 出错
+        return false;
+      }
+      // 找一个空闲的缓存 , 这里把ch参数复用了
+      for(ch=0;ch<CAN_PACK_MAX_SIZE;ch++)
+      {
+          if(canPackRec[ch].sign == 0)break;
+      }
+      if(ch == CAN_PACK_MAX_SIZE)
+      {
+          myShow->setTextStyle(QString::fromLocal8Bit("缓存CAN的内存不足"),Qt::red,Qt::white,16);   // 出错
+          return false;
+      }
+      // 清理空间，缓存数据
+      canPackRec[ch].date.clear();
+      canPackRec[ch].date.append(da);
+      canPackRec[ch].curLen   = len;
+      canPackRec[ch].destID   = (id >> 16) & 0x1f;
+      canPackRec[ch].srcID    = (id >> 22) & 0x1f;
+      canPackRec[ch].sign     = 1;  //进入接收状态
+
+      canPackRec[ch].needLen  = da.at(2).toUInt(NULL,16)+5;// can包需要的长度
+      if(da.at(1)=="c4")  // 试剂封闭板卡主动上传的数据，这个长度占用了两个位
+      {
+          canPackRec[ch].needLen  = da.at(2).toUInt(NULL,16)*256+da.at(3).toUInt(NULL,16)+6;// 这个参数在试剂封闭板卡中有变动
+      }
+  }
+  // 3.3.已经缓存一部分的 CAN 数据
   else
   {
-    // 3.2.1.目的ID不一样
-    if(canDestID != (char)((id >> 16) & 0x1f))
-    {
-      emit canRevErr(1);
-      myShow->setTextStyle(QString::fromLocal8Bit("目的ID不一样"),Qt::red,Qt::white,16);   // 出错
-      myShow->setText(str);
-      qDebug()<<"err: "<<canDate;
+      canPackRec[ch].date.append(da);
+      canPackRec[ch].curLen += len;
 
-      canSign = 0;//接收清空
-      return false;
-    }
-    // 3.2.2.源ID不一样
-    if(canSrcID  != (char)((id >> 22) & 0x1f))
-    {
-      emit canRevErr(2);
-      myShow->setTextStyle(QString::fromLocal8Bit("源ID不一样"),Qt::red,Qt::white,16);   // 出错
-      canSign = 0;//接收清空
-      return false;
-    }
-    canDate.append(da);
-    canCurLen += len;
   }
+  // 到这里 canPackRec[ch] 就是当前操作的对象
   // 3.3.1接收长度出错
-  if(canNeedLen < canCurLen)
+  if(canPackRec[ch].needLen < canPackRec[ch].curLen)
   {
-    qDebug()<<"canNeedLen="<<canNeedLen<<"canCurLen="<<canCurLen;
+    qDebug()<<"canNeedLen="<<canPackRec[ch].needLen<<"canCurLen="<<canPackRec[ch].curLen;
     emit canRevErr(3);
     myShow->setTextStyle(QString::fromLocal8Bit("接收长度出错-"),Qt::red,Qt::white,16);   // 出错
-    canSign = 0;//接收清空
+    canPackRec[ch].sign = 0;//接收清空
     return false;
   }
   // 3.3.2.接收长度正确->校验数据
-  if(canNeedLen == canCurLen)
+  if(canPackRec[ch].needLen == canPackRec[ch].curLen)
   {
-    // 头错误
-    if(canDate.at(0).toLower() != "aa")
-    {
-      emit canRevErr(1);
-      myShow->setTextStyle(QString::fromLocal8Bit("头错误2"),Qt::red,Qt::white,16);   // 出错
-      return false;
-    }
     // 尾错误
-    if(canDate.at(canDate.size()-1).toLower() != "55")
+    if(canPackRec[ch].date.at(canPackRec[ch].date.size()-1).toLower() != "55")
     {
       emit canRevErr(1);
       myShow->setTextStyle(QString::fromLocal8Bit("尾错误"),Qt::red,Qt::white,16);   // 出错
@@ -205,29 +203,29 @@ bool canRecv::explain(QString str)
     }
     uchar c = 0;
     uint  i ;
-    for(i=1;i<(canCurLen-2);i++)
+    for(i=1;i<(canPackRec[ch].curLen-2);i++)
     {
-        c += canDate.at(i).toUInt(NULL,16);
+        c += canPackRec[ch].date.at(i).toUInt(NULL,16);
     }
     // 3.3.3.校验出错
-    if(c != canDate.at(i).toUInt(NULL,16))
+    if(c != canPackRec[ch].date.at(i).toUInt(NULL,16))
     {
       emit canRevErr(4);
       myShow->setTextStyle(QString::fromLocal8Bit("校验出错"),Qt::red,Qt::white,16);   // 出错
-      canSign = 0;//接收清空
+      canPackRec[ch].sign = 0;//接收清空
       return false;
     }
     // 3.3.4.接收正确,数据转发出去
 //    qDebug()<<"canSrcID="<<(uchar)canSrcID;        // 调试
 //    qDebug()<<"canDestID="<<(uchar)canDestID;      // 调试
 //    qDebug()<<"canDate="<<canDate;     // 调试
-    canSign = 0;//接收清空
+    canPackRec[ch].sign = 0;//接收清空
 
-    canDate.prepend(QString("0x%1").arg(canDestID,2,16,(QChar)'0'));
-    canDate.prepend(QString("0x%1").arg(canSrcID,2,16,(QChar)'0'));
+    canPackRec[ch].date.prepend(QString("0x%1").arg(canPackRec[ch].destID,2,16,(QChar)'0'));
+    canPackRec[ch].date.prepend(QString("0x%1").arg(canPackRec[ch].srcID,2,16,(QChar)'0'));
     // 翻译内容+保存can数据
-    canFilter->append(canDate);
-    translate(canDate);
+    canFilter->append(canPackRec[ch].date);
+    translate(canPackRec[ch].date);
 
     return true;
   }
