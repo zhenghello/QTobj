@@ -1,22 +1,26 @@
+/*
+    这个界面用于生成一个CAN包数据
+*/
 #include "canpack.h"
 
 #define CELL_HEIGHT 20 //单元格高度
-#define CELL_WIDTH  30 //单元格宽度
+#define CELL_WIDTH  25 //单元格宽度
 
-canPack::canPack(int argNum)
+canPack::canPack(QWidget *parent, int argNum):QTableWidget(parent)
 {
-
     // 列表初始化
+    setParent(parent);
     table_init(argNum);
-    // 设置
-    setMaximumHeight(CELL_HEIGHT * 2+2);
-    setMaximumWidth(CELL_WIDTH*(argNum+8)+2);
 }
-
+#include"QDebug"
 void canPack::table_init(int argNum)
 {
     int columnNum = 8 + argNum; // 列数
     int i;
+    // 设置全部的高度和宽度
+    setMaximumHeight(CELL_HEIGHT * 3+2);
+    setMaximumWidth(CELL_WIDTH*(argNum+8)+2);
+
     clear ();
     //设置行列
     setRowCount(2);               // 行数
@@ -26,40 +30,43 @@ void canPack::table_init(int argNum)
     verticalHeader()->hide();
     horizontalHeader()->setDefaultSectionSize(CELL_WIDTH);   //设置默认列宽
     verticalHeader()->setDefaultSectionSize(CELL_HEIGHT);    //设置默认行高
-    //设置内容
+    //设置内容->创建一堆单元格
     QTableWidgetItem *qtab;
     for(i=0;i<columnNum;i++)
     {
+        //  重入出错
         qtab = new QTableWidgetItem();
         qtab->setText("00");
         setItem(0,i,qtab);
     }
+
     // 设置头尾和长度不可编辑
-    qtab = new QTableWidgetItem();
+    qtab = item(0,0);
     qtab->setBackgroundColor(QColor(200, 200, 200));//颜色
     qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
-    qtab->setText("AA");
-    setItem(0,0,qtab);
-    qtab = new QTableWidgetItem();
+    qtab->setText("aa");
+    //setItem(0,0,qtab);
+
+    qtab = item(0,columnNum-1);
     qtab->setBackgroundColor(QColor(200, 200, 200));//颜色
     qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
     qtab->setText("55");
-    setItem(0,columnNum-1,qtab);
-    qtab = new QTableWidgetItem();
+    //setItem(0,columnNum-1,qtab);
+
+    qtab = item(0,2);   // 长度
     qtab->setBackgroundColor(QColor(200, 200, 200));//颜色
     qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
     qtab->setText(QString::number(argNum+3));
-    setItem(0,2,qtab);
+    //setItem(0,2,qtab);
+
     // 设置特殊颜色
-    qtab = new QTableWidgetItem("00");
+    qtab = item(0,3);
     qtab->setBackgroundColor(QColor(255, 85, 127));//颜色
-    setItem(0,3,qtab);
-    qtab = new QTableWidgetItem("00");
+    qtab = item(0,4);
     qtab->setBackgroundColor(QColor(255, 85, 127));//颜色
-    setItem(0,4,qtab);
-    qtab = new QTableWidgetItem("00");
+    qtab = item(0,5);
     qtab->setBackgroundColor(QColor(255, 85, 127));//颜色
-    setItem(0,5,qtab);
+
     //合并第二行
     setSpan(1,0,1,columnCount());
     qtab = new QTableWidgetItem();
@@ -141,6 +148,7 @@ void canPack::table_cellChanged(int row, int column)
     //qDebug()<<column;
     composeStr();//重新合成
 }
+// 外部函数 ---------------------------------------------------------------------------------------
 // 设置单元格参数-只设置命令和参数区
 void canPack::setCanPack_OrderArg(QStringList qsl)
 {
@@ -171,4 +179,24 @@ void canPack::sendCanPack(void)
     if ( qtab == NULL || (qtab->text() == "") )return; //空白退出
     QString str = qtab->text();
     emit send_can_pack(str);//发送数据
+}
+// 重设单元格个数
+void canPack::setCanPack_ArgNum(int argNum)
+{
+    int i;
+    QTableWidgetItem *qtab;
+    // 删除原有的空间
+    for(i=0;i<columnCount();i++)
+    {
+        qtab = item(0,i);
+        removeCellWidget(0,i);
+        delete qtab;
+
+    }
+    qtab = item(1,0);
+    removeCellWidget(1,0);
+    delete qtab;
+
+    // 重新初始化
+    table_init(argNum);
 }

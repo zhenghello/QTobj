@@ -5,6 +5,8 @@
 #include "ftreeDabeBase.h"
 #include "FsshGui.h"
 
+#include "cantmpconfig.h"   // 温度调节界面
+
 
 namespace Ui {class canSend;}
 
@@ -33,6 +35,8 @@ private slots:
     void on_button_reboot_clicked();
 
 
+    void on_button_temp_clicked();
+
 signals:
     void sFtpFinished(QSsh::SftpJobId job, const QString &error);// FTP文件操作结束信号
 private:
@@ -40,8 +44,10 @@ private:
     FsshGui         *sshPort;    // SSH端口
     FtreeDabeBase   *treeOredr;  // 树形命令框
     FtreeDabeBase   *treeFile;   // 树形命令框
+    canTmpConfig    *pTmpCfg;       // 温度配置
     void dat_config_save(void);
     void dat_config_load(void);
+
 };
 
 #endif // CANSEND_H

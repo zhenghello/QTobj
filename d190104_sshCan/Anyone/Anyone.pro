@@ -26,7 +26,8 @@ INCLUDEPATH += ../../mylib/fdebug/ \
                ./youLib/fssh/ \
                ./youLib/messageBoard/ \
                ./youLib/rtabwidget/ \
-
+               ./youLib/canPack/ \
+               ./youLib/ftmpConfig/ \
 
 
 SOURCES += main.cpp\
@@ -46,7 +47,8 @@ SOURCES += main.cpp\
     youLib/fssh/FsshGuiAutoAck.cpp \
     youLib/messageBoard/messageBoard.cpp \
     youLib/canRecv/fcanshow.cpp \
-    youLib/canpack/canpack.cpp
+    youLib/canpack/canpack.cpp \
+    youLib/ftmpConfig/cantmpconfig.cpp
 
 HEADERS  += anyone.h \
     ../../mylib/fdebug/fdebug.h \
@@ -64,7 +66,8 @@ HEADERS  += anyone.h \
     youLib/fssh/FsshGuiAutoAck.h \
     youLib/messageBoard/messageBoard.h \
     youLib/canRecv/fcanshow.h \
-    youLib/canpack/canpack.h
+    youLib/canpack/canpack.h \
+    youLib/ftmpConfig/cantmpconfig.h
     ssh.h
 
 
@@ -77,6 +80,7 @@ FORMS    += anyone.ui \
     youLib/fssh/FsshGuiAutoAck.ui \
     youLib/messageBoard/messageBoard.ui \
     youLib/canRecv/fcanshow.ui \
+    youLib/ftmpConfig/cantmpconfig.ui
 
 LIBS += -L$$PWD/qssh/release/lib -lQSsh    # ssh need
 

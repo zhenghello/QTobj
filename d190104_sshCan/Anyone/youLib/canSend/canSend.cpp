@@ -1,6 +1,8 @@
 #include "canSend.h"
 #include "ui_canSend.h"
 
+#include "canpack.h"
+canPack *cp;
 
 canSend::canSend(QWidget *parent, QString titleName) :QWidget(parent),ui(new Ui::canSend)
 {
@@ -27,6 +29,7 @@ canSend::canSend(QWidget *parent, QString titleName) :QWidget(parent),ui(new Ui:
 
     // 文件下载框
     treeFile = new FtreeDabeBase(this,"sshFile");
+    treeFile->setWhatsThis("点击“源地址”列下载到本地\n点击“本机地址”列上传到服务器");
     ui->tab_fileDownload->layout()->addWidget(treeFile);
     ui->label_file->deleteLater();
     connect(treeFile,SIGNAL(sendMsgTree(QTreeWidgetItem*,int)),this,SLOT(fileTreeOperate(QTreeWidgetItem*,int)));   // 将对tree的右击事件转到本地处理
@@ -34,6 +37,15 @@ canSend::canSend(QWidget *parent, QString titleName) :QWidget(parent),ui(new Ui:
     //主显示框
     ui->tabWidget->setCurrentWidget(ui->tab_tree);
 
+    // 温度调试
+    pTmpCfg = NULL;
+
+    // 测试
+    cp = new canPack(this,10);
+    cp->setWindowFlags(cp->windowFlags()|Qt::Window);//设置为外框
+    // cp->show();
+    // cp->setCanPack_ArgNum(20);
+    // ui->verticalLayout_test->addWidget(cp);
 }
 canSend::~canSend()
 {
@@ -202,7 +214,7 @@ void canSend::sendCanMsg(QString str)
         }
         // 尾巴段
         idCode = (canDestID<<16)+(canSrcID<<22)+0xc000; // 含ID的编码+段尾编码
-        segnum = 0;
+        segnum ++;
         canStr += QString("cansend can0 -i 0x%1").arg(idCode+(segnum<<8),0,16);
         while (strlist.size())
         {
@@ -258,4 +270,24 @@ void canSend::dat_config_load(void)
 
 
     load_config.endGroup();                            // 组操作------------------------------------------end
+}
+// 按下调试温度按键
+void canSend::on_button_temp_clicked()
+{
+    if(pTmpCfg == NULL)
+    {
+        pTmpCfg = new canTmpConfig(this);
+        pTmpCfg->setWindowFlags(pTmpCfg->windowFlags()|Qt::Window);//设置为外框
+        pTmpCfg->show();
+        connect(pTmpCfg,SIGNAL(send_can_pack(QString)),this,SLOT(sendCanMsg(QString)));
+    }
+    else
+    {
+        disconnect(pTmpCfg,SIGNAL(send_can_pack(QString)),this,SLOT(sendCanMsg(QString)));
+        pTmpCfg->deleteLater();
+        pTmpCfg = NULL;
+    }
+//      cp->setCanPack_ArgNum(20);
+//      cp->table_init(20);
+
 }

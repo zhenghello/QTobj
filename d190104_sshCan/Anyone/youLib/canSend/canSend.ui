@@ -447,8 +447,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="toolTip">
-      <string>点击“源地址”列下载到本地
-点击“本机地址”列上传到服务器</string>
+      <string/>
      </property>
      <property name="tabShape">
       <enum>QTabWidget::Triangular</enum>
@@ -966,7 +965,7 @@
          <item>
           <widget class="QPushButton" name="button_temp">
            <property name="text">
-            <string>温控调试-没</string>
+            <string>温控调试</string>
            </property>
           </widget>
          </item>
@@ -1408,6 +1407,13 @@
            </property>
            <property name="frameShadow">
             <enum>QFrame::Raised</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button_text">
+           <property name="text">
+            <string>  测试</string>
            </property>
           </widget>
          </item>
@@ -2796,6 +2802,16 @@
           </widget>
          </item>
         </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>测试</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_8">
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_test"/>
        </item>
       </layout>
      </widget>

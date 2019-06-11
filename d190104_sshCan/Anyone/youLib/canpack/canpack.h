@@ -10,12 +10,14 @@ class canPack : public QTableWidget
 {
     Q_OBJECT
 public:
-    canPack(int argNum=0);
+    canPack(QWidget *parent = 0,int argNum=0);
     void setCanPack_OrderArg(QStringList qsl);       // 设置单元格_命令和参数
     void setCanPack_ctlCode(QString str);            // 设置单元格_控制码
     void sendCanPack(void);                          // 发送单元格
-private:
+    void setCanPack_ArgNum(int argNum);              // 重设单元格个数
     void table_init(int argNum);
+
+private:
     void composeStr(void);                          // 合成操作
 
 private slots:

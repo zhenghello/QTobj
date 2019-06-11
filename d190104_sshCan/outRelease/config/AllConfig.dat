@@ -3,7 +3,7 @@ have_config=true
 plainTextEdit_in="<0x00c00000> [8] aa d4 03 01 00 23 fb 55 \n\n<0x00c04000> [8] aa d8 2f f0 00 00 45 3a \n<0x00c08100> [8] 45 52 52 5f 44 42 5f 43 \n<0x00c08200> [8] 4d 44 5f 46 4f 52 4d 41 \n<0x00c08300> [8] 54 5f 44 41 54 41 4c 45 \n<0x00c08400> [8] 4e 21 5c 63 61 6e 5f 72 \n<0x00c08500> [8] 65 63 65 2e 63 30 32 34 \n<0x00c0c600> [4] 33 0d 0b 55 \n\n<0x00c04000> [8] aa c0 05 01 00 23 00 00 \n<0x00c0c000> [2] e9 55 "
 checkBox_recvFrame=true
 checkBox_sendFrame=true
-lineEdit_IP=192.168.8.111
+lineEdit_IP=192.168.8.113
 
 [canDump]
 have_config=true
@@ -27,7 +27,7 @@ checkBox_hide=false
 
 [canSendSSH]
 have_config=true
-lineEdit_IP=192.168.8.111
+lineEdit_IP=192.168.8.113
 lineEdit_name=root
 lineEdit_password=JDm&069401402
 spinBox_port=22
@@ -75,7 +75,7 @@ horizontalSlider_tree=516
 
 [canRecvSSH]
 have_config=true
-lineEdit_IP=192.168.8.111
+lineEdit_IP=192.168.8.113
 lineEdit_name=root
 lineEdit_password=JDm&069401402
 spinBox_port=22
