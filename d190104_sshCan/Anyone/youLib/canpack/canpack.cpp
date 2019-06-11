@@ -15,11 +15,11 @@ canPack::canPack(QWidget *parent, int argNum):QTableWidget(parent)
 #include"QDebug"
 void canPack::table_init(int argNum)
 {
-    int columnNum = 8 + argNum; // 列数
+    int columnNum = 10 + argNum; // 列数 can头+头尾标识符+校验位+3个固定命令码
     int i;
     // 设置全部的高度和宽度
     setMaximumHeight(CELL_HEIGHT * 3+2);
-    setMaximumWidth(CELL_WIDTH*(argNum+8)+2);
+    setMaximumWidth(CELL_WIDTH*(argNum+10)+2);
 
     clear ();
     //设置行列
@@ -39,32 +39,39 @@ void canPack::table_init(int argNum)
         qtab->setText("00");
         setItem(0,i,qtab);
     }
+    // 设置头两个ID选项默认为空
+    qtab = item(0,0);
+    qtab->setBackgroundColor(QColor(255, 50, 255));//颜色
+    qtab->setText("");
+    qtab = item(0,1);
+    qtab->setBackgroundColor(QColor(255, 50, 255));//颜色
+    qtab->setText("");
 
     // 设置头尾和长度不可编辑
-    qtab = item(0,0);
-    qtab->setBackgroundColor(QColor(200, 200, 200));//颜色
+    qtab = item(0,2);
+    qtab->setBackgroundColor(QColor(200, 200, 100));//颜色
     qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
     qtab->setText("aa");
     //setItem(0,0,qtab);
 
     qtab = item(0,columnNum-1);
-    qtab->setBackgroundColor(QColor(200, 200, 200));//颜色
+    qtab->setBackgroundColor(QColor(200, 200, 100));//颜色
     qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
     qtab->setText("55");
     //setItem(0,columnNum-1,qtab);
 
-    qtab = item(0,2);   // 长度
+    qtab = item(0,4);   // 长度
     qtab->setBackgroundColor(QColor(200, 200, 200));//颜色
     qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
     qtab->setText(QString::number(argNum+3));
     //setItem(0,2,qtab);
 
     // 设置特殊颜色
-    qtab = item(0,3);
-    qtab->setBackgroundColor(QColor(255, 85, 127));//颜色
-    qtab = item(0,4);
-    qtab->setBackgroundColor(QColor(255, 85, 127));//颜色
     qtab = item(0,5);
+    qtab->setBackgroundColor(QColor(255, 85, 127));//颜色
+    qtab = item(0,6);
+    qtab->setBackgroundColor(QColor(255, 85, 127));//颜色
+    qtab = item(0,7);
     qtab->setBackgroundColor(QColor(255, 85, 127));//颜色
 
     //合并第二行
@@ -107,18 +114,18 @@ void canPack::composeStr(void)
     QTableWidgetItem *qtab;
     // 计算个数
     int count=0;
-    for(i=3;i<columnCount()-2;i++)
+    for(i=3+2;i<columnCount()-2;i++)
     {
         qtab = item(0,i);
         if ( qtab == NULL || (qtab->text() == "") )continue;
         else count++;
     }
-    qtab = takeItem(0,2);
+    qtab = takeItem(0,2+2);
     qtab->setText(QString("%1").arg(count,2,16,QChar('0')));
-    setItem(0,2,qtab);
+    setItem(0,2+2,qtab);
     // 计算校验和
     int sumcheck=0;
-    for(i=1;i<columnCount()-2;i++)
+    for(i=1+2;i<columnCount()-2;i++)
     {
         qtab = item(0,i);
         if ( qtab == NULL || (qtab->text() == "") )continue;
@@ -152,21 +159,21 @@ void canPack::table_cellChanged(int row, int column)
 // 设置单元格参数-只设置命令和参数区
 void canPack::setCanPack_OrderArg(QStringList qsl)
 {
-    if(qsl.size()!=columnCount()-5)return;//个数不符，退出
+    if(qsl.size()!=columnCount()-5-2)return;//个数不符，退出
     int i;
-    QTableWidgetItem *qtab;
+    QTableWidgetItem *qtab;//
     for(i=0;i<qsl.size();i++)
     {
-        qtab = takeItem(0,i+3);
+        qtab = takeItem(0,i+3+2);
         qtab->setText(qsl.at(i));
-        setItem(0,i+3,qtab);
+        setItem(0,i+3+2,qtab);
     }
 }
 // 设置单元格参数-只设置控制码
 void canPack::setCanPack_ctlCode(QString str)
 {
     QTableWidgetItem *qtab;
-    qtab = takeItem(0,1);
+    qtab = takeItem(0,1+2);
     qtab->setText(str);
     setItem(0,1,qtab);
 }
