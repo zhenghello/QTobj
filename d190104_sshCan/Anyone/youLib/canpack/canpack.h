@@ -14,8 +14,8 @@ public:
     void setCanPack_OrderArg(QStringList qsl);       // 设置单元格_命令和参数
     void setCanPack_ctlCode(QString str);            // 设置单元格_控制码
     void sendCanPack(void);                          // 发送单元格
-    void setCanPack_ArgNum(int argNum);              // 重设单元格个数
     void table_init(int argNum);
+    void setCanPack_IdCode(QString str1,QString str2); // 设置收发ID区
 
 private:
     void composeStr(void);                          // 合成操作

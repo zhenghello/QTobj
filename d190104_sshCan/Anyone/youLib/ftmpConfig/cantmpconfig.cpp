@@ -10,24 +10,14 @@ canTmpConfig::canTmpConfig(QWidget *parent) :QWidget(parent),ui(new Ui::canTmpCo
     setWindowFlags(windowFlags()|Qt::Window);//设置为外框
 
     // 创建CAN包
-    configPID = new canPack(this,12);// 初始化一个 can 包格式
-    //configPID->hide();
-    configTmp = new canPack(this,2);
+    configTmp = new canPack(this,12);
     //configTmp->hide();
-    openTmp = new canPack(this,1);
-    //openTmp->hide();
-    readTmp = new canPack(this,0);
-    //readTmp->hide();
+
     // 插入canPack
-    ui->gridLayout_cp->addWidget(configPID,0,1);
-    ui->gridLayout_cp->addWidget(configTmp,1,1);
-    ui->gridLayout_cp->addWidget(openTmp,2,1);
-    ui->gridLayout_cp->addWidget(readTmp,3,1);
+    ui->gridLayout_cp->addWidget(configTmp);
     // 关联信号
-    connect(configPID,  SIGNAL(send_can_pack(QString)),this,SIGNAL(send_can_pack(QString)));
     connect(configTmp,  SIGNAL(send_can_pack(QString)),this,SIGNAL(send_can_pack(QString)));
-    connect(openTmp,    SIGNAL(send_can_pack(QString)),this,SIGNAL(send_can_pack(QString)));
-    connect(readTmp,    SIGNAL(send_can_pack(QString)),this,SIGNAL(send_can_pack(QString)));
+
 
 }
 canTmpConfig::~canTmpConfig()
@@ -58,8 +48,10 @@ void canTmpConfig::on_b_setPID_clicked()
     qsl.append(QString("%1").arg((t>>16)&0xFF,2,16,QChar('0')));
     qsl.append(QString("%1").arg((t>> 8)&0xFF,2,16,QChar('0')));
     qsl.append(QString("%1").arg((t>> 0)&0xFF,2,16,QChar('0')));
-    configPID->setCanPack_OrderArg(qsl);
-    configPID->sendCanPack();
+    configTmp->setCanPack_IdCode(QString("0x%1").arg(0,2,16,QChar('0')),QString("0x%1").arg(ui->box_id->value(),2,16,QChar('0')));  // 设置ID
+
+    configTmp->setCanPack_OrderArg(qsl);
+    configTmp->sendCanPack();
 }
 // 读取PID
 void canTmpConfig::on_b_getPID_clicked()
@@ -70,8 +62,10 @@ void canTmpConfig::on_b_getPID_clicked()
     t = ui->box_num->value();
     qsl.append(QString("%1").arg(t,2,16,QChar('0')));//设置对象
     qsl.append("41");       // PID查询命令
-    readTmp->setCanPack_OrderArg(qsl);
-    readTmp->sendCanPack();
+    configTmp->setCanPack_IdCode(QString("0x%1").arg(0,2,16,QChar('0')),QString("0x%1").arg(ui->box_id->value(),2,16,QChar('0')));  // 设置ID
+
+    configTmp->setCanPack_OrderArg(qsl);
+    configTmp->sendCanPack();
 }
 // 设置温度
 void canTmpConfig::on_b_setTmp_clicked()
@@ -85,6 +79,8 @@ void canTmpConfig::on_b_setTmp_clicked()
     t = ui->box_tmp->value()*100;
     qsl.append(QString("%1").arg((t>> 8)&0xFF,2,16,QChar('0')));
     qsl.append(QString("%1").arg((t>> 0)&0xFF,2,16,QChar('0')));
+    configTmp->setCanPack_IdCode(QString("0x%1").arg(0,2,16,QChar('0')),QString("0x%1").arg(ui->box_id->value(),2,16,QChar('0')));  // 设置ID
+
     configTmp->setCanPack_OrderArg(qsl);
     configTmp->sendCanPack();
 }
@@ -97,8 +93,10 @@ void canTmpConfig::on_b_readTmp_clicked()
     t = ui->box_num->value();
     qsl.append(QString("%1").arg(t,2,16,QChar('0')));//设置对象
     qsl.append("10");       // 温度查询命令
-    readTmp->setCanPack_OrderArg(qsl);
-    readTmp->sendCanPack();
+    configTmp->setCanPack_IdCode(QString("0x%1").arg(0,2,16,QChar('0')),QString("0x%1").arg(ui->box_id->value(),2,16,QChar('0')));  // 设置ID
+
+    configTmp->setCanPack_OrderArg(qsl);
+    configTmp->sendCanPack();
 }
 
 // 打开温度控制
@@ -111,8 +109,10 @@ void canTmpConfig::on_b_openTmp_clicked()
     qsl.append(QString("%1").arg(t,2,16,QChar('0')));//设置对象
     qsl.append("01");
     qsl.append("01");//打开
-    openTmp->setCanPack_OrderArg(qsl);
-    openTmp->sendCanPack();
+    configTmp->setCanPack_IdCode(QString("0x%1").arg(0,2,16,QChar('0')),QString("0x%1").arg(ui->box_id->value(),2,16,QChar('0')));  // 设置ID
+
+    configTmp->setCanPack_OrderArg(qsl);
+    configTmp->sendCanPack();
 }
 // 关闭温度控制
 void canTmpConfig::on_b_closeTmp_clicked()
@@ -124,8 +124,10 @@ void canTmpConfig::on_b_closeTmp_clicked()
     qsl.append(QString("%1").arg(t,2,16,QChar('0')));//设置对象
     qsl.append("01");
     qsl.append("00");//关闭
-    openTmp->setCanPack_OrderArg(qsl);
-    openTmp->sendCanPack();
+    configTmp->setCanPack_IdCode(QString("0x%1").arg(0,2,16,QChar('0')),QString("0x%1").arg(ui->box_id->value(),2,16,QChar('0')));  // 设置ID
+
+    configTmp->setCanPack_OrderArg(qsl);
+    configTmp->sendCanPack();
 }
 // 允许设置PID 参数
 void canTmpConfig::on_checkBox_setPidEnable_clicked(bool checked)

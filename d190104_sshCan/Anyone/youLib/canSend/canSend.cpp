@@ -22,7 +22,7 @@ canSend::canSend(QWidget *parent, QString titleName) :QWidget(parent),ui(new Ui:
     ui->tab_ssh->layout()->addWidget(sshPort);
     ui->label_order->deleteLater();
 
-    connect(treeOredr,SIGNAL(sendMsgTree(QTreeWidgetItem*,int))             ,this, SLOT(msgTreeAnalyze(QTreeWidgetItem*,int)));           // 将对tree的右击事件转到本地处理
+    connect(treeOredr,&FtreeDabeBase::sendMsgTree                           ,this, &canSend::msgTreeAnalyze);           // 将对tree的右击事件转到本地处理
     connect(sshPort,SIGNAL(connectSuccess())                                ,this, SLOT(showSshOpenMsg()));                               // 连接成功信号
     connect(sshPort,SIGNAL(connectFailure())                                ,this, SLOT(showSshCloseMsg()));                              // 连接失败信号
     connect(sshPort,SIGNAL(sFtpFinished(QSsh::SftpJobId, const QString))    ,this, SIGNAL(sFtpFinished(QSsh::SftpJobId, const QString))); // FTP文件操作结束信号

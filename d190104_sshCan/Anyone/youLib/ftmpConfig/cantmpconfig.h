@@ -30,10 +30,8 @@ private slots:
 
 private:
     Ui::canTmpConfig *ui;
-    canPack *configPID;
     canPack *configTmp;
-    canPack *openTmp;
-    canPack *readTmp;
+
 };
 
 #endif // CANTMPCONFIG_H

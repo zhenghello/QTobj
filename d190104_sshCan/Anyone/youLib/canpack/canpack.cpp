@@ -1,5 +1,7 @@
 /*
     这个界面用于生成一个CAN包数据
+    这个can包数据可以自动合成。
+    可以外部设置参数
 */
 #include "canpack.h"
 
@@ -13,13 +15,14 @@ canPack::canPack(QWidget *parent, int argNum):QTableWidget(parent)
     table_init(argNum);
 }
 #include"QDebug"
+// table框初始化
 void canPack::table_init(int argNum)
 {
     int columnNum = 10 + argNum; // 列数 can头+头尾标识符+校验位+3个固定命令码
     int i;
     // 设置全部的高度和宽度
     setMaximumHeight(CELL_HEIGHT * 3+2);
-    setMaximumWidth(CELL_WIDTH*(argNum+10)+2);
+    setMaximumWidth(CELL_WIDTH*(argNum+10+2)+2);
 
     clear ();
     //设置行列
@@ -46,6 +49,9 @@ void canPack::table_init(int argNum)
     qtab = item(0,1);
     qtab->setBackgroundColor(QColor(255, 50, 255));//颜色
     qtab->setText("");
+    // 设置前两列宽点
+    setColumnWidth(0,CELL_WIDTH*2);
+    setColumnWidth(1,CELL_WIDTH*2);
 
     // 设置头尾和长度不可编辑
     qtab = item(0,2);
@@ -87,14 +93,16 @@ void canPack::table_init(int argNum)
     QObject::connect(this,SIGNAL(cellChanged(int,int)),this,SLOT(table_cellChanged(int,int)));
     composeStr(); //合成
 }
-//鼠标按下,excel的动作
+#include <QtWidgets/QApplication>
+//鼠标按下,excel的动作，会把合成后的数据发送信号出来
 void canPack::table_pressed(const QModelIndex &index)
 {
     int cur_row     =index.row();    //当前行
     int cur_column  =index.column(); //当前列
     QTableWidgetItem *qtab;
     // 0.只有右击触发有用
-    //if( qApp->mouseButtons() != Qt::RightButton)return ;
+
+    if( qApp->mouseButtons() != Qt::RightButton)return ;
     if(1!=cur_row || 0!=cur_column)return;//只有第二行才有用
 
     //发送前先合成
@@ -106,7 +114,7 @@ void canPack::table_pressed(const QModelIndex &index)
 
     emit send_can_pack( str);//发送数据
 }
-// 合成字符串
+// 合成字符串，根据第一行，计算参数长度，合成第二行数据，空白格会被忽略，
 void canPack::composeStr(void)
 {
     QObject::disconnect(this,SIGNAL(cellChanged(int,int)),this,SLOT(table_cellChanged(int,int)));
@@ -120,9 +128,8 @@ void canPack::composeStr(void)
         if ( qtab == NULL || (qtab->text() == "") )continue;
         else count++;
     }
-    qtab = takeItem(0,2+2);
+    qtab = item(0,2+2);
     qtab->setText(QString("%1").arg(count,2,16,QChar('0')));
-    setItem(0,2+2,qtab);
     // 计算校验和
     int sumcheck=0;
     for(i=1+2;i<columnCount()-2;i++)
@@ -131,9 +138,8 @@ void canPack::composeStr(void)
         if ( qtab == NULL || (qtab->text() == "") )continue;
         else sumcheck += qtab->text().toInt(nullptr,16);
     }
-    qtab = takeItem(0,columnCount()-2);
+    qtab = item(0,columnCount()-2);
     qtab->setText(QString("%1").arg(sumcheck%256,2,16,QChar('0')));
-    setItem(0,columnCount()-2,qtab);
     // 合成字符串
     QString str;
     for(i=0;i<columnCount();i++)
@@ -142,40 +148,53 @@ void canPack::composeStr(void)
         if ( qtab == NULL || (qtab->text() == "") )continue;
         str += qtab->text() + " ";
     }
-    qtab = takeItem(1,0);
+    qtab = item(1,0);
     qtab->setText(str);
-    setItem(1,0,qtab);
     QObject::connect(this,SIGNAL(cellChanged(int,int)),this,SLOT(table_cellChanged(int,int)));
 }
-// 单元格改变
+// 单元格改变，内部关联，自动合成数据
 void canPack::table_cellChanged(int row, int column)
 {
-    column = 0;
+    if(column){;}
     if(row!=0)return;//只处理第一行
     //qDebug()<<column;
     composeStr();//重新合成
 }
 // 外部函数 ---------------------------------------------------------------------------------------
-// 设置单元格参数-只设置命令和参数区
+// 设置单元格参数-只设置命令和参数区，输入参数不足就会补空
 void canPack::setCanPack_OrderArg(QStringList qsl)
 {
-    if(qsl.size()!=columnCount()-5-2)return;//个数不符，退出
     int i;
-    QTableWidgetItem *qtab;//
-    for(i=0;i<qsl.size();i++)
+    QTableWidgetItem *qtab;
+    // 如果个数不够就补空白，如果太过就会被截断
+    for(i=0;i<columnCount()-7;i++)
     {
-        qtab = takeItem(0,i+3+2);
-        qtab->setText(qsl.at(i));
-        setItem(0,i+3+2,qtab);
+        qtab = item(0,i+3+2);
+        if(qsl.size()<=i)//超出范围补空白
+        {
+           qtab->setText("");
+        }
+        else
+        {
+            qtab->setText(qsl.at(i));
+        }
     }
 }
 // 设置单元格参数-只设置控制码
 void canPack::setCanPack_ctlCode(QString str)
 {
     QTableWidgetItem *qtab;
-    qtab = takeItem(0,1+2);
+    qtab = item(0,1+2);
     qtab->setText(str);
-    setItem(0,1,qtab);
+}
+// 设置单元格参数-只设置发送收发ID
+void canPack::setCanPack_IdCode(QString str1,QString str2)
+{
+    QTableWidgetItem *qtab;
+    qtab = item(0,0);
+    qtab->setText(str1);
+    qtab = item(0,1);
+    qtab->setText(str2);
 }
 // 发送单元格参数
 void canPack::sendCanPack(void)
@@ -187,23 +206,5 @@ void canPack::sendCanPack(void)
     QString str = qtab->text();
     emit send_can_pack(str);//发送数据
 }
-// 重设单元格个数
-void canPack::setCanPack_ArgNum(int argNum)
-{
-    int i;
-    QTableWidgetItem *qtab;
-    // 删除原有的空间
-    for(i=0;i<columnCount();i++)
-    {
-        qtab = item(0,i);
-        removeCellWidget(0,i);
-        delete qtab;
 
-    }
-    qtab = item(1,0);
-    removeCellWidget(1,0);
-    delete qtab;
 
-    // 重新初始化
-    table_init(argNum);
-}
