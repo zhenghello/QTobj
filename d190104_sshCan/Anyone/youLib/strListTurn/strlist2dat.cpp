@@ -21,6 +21,8 @@ bool dat2ListAll(QString datName,QList<QStringList> *listAll)
     {   // 2.1.读取一行数据
         QByteArray line = file.readLine();
         QString str = QString::fromUtf8(line.data ());
+        // 2.2.没有 %% 的行跳过
+        if(str.indexOf("%%") == -1)continue;
         // 2.2.分割数据
         QStringList list=str.split("%%");
         QStringList list2;

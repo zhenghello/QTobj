@@ -1,4 +1,9 @@
 ===================================================================================================
+用调试：                QMessageBox::warning(NULL, QString("File Error"),QString("File Error\r\n")+QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__));
+
+
+
+===================================================================================================
 日期:
 修改:
 结果:

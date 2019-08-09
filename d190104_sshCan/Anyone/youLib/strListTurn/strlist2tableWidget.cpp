@@ -5,6 +5,7 @@
     1.QStringList 的第一行数据代表他的头声明
     2.QStringList 的第一个数据为0则忽略导入，可以在外部文件中用来做注释，不过导出后就没有了
     3.QStringList 的第一个数据数据为之能比上次的大1，超过按1处理
+    4.dat中的第一列数据没用
 
     4.前10行用于参数导入，不作为树的内容
     4.1.第1行保存列个数，最小为3
@@ -14,7 +15,7 @@
 #include "strlist2tableWidget.h"
 #include <QHeaderView>
 
-//#include <QDebug>
+#include <QDebug>
 // 将 表 转为 listAll
 void tableWidget2listAll(QTableWidget *table,QList<QStringList> *listAll)
 {
@@ -102,7 +103,12 @@ bool listAll2tableWidget(QTableWidget *table,QList<QStringList> *listAll)
     // 2.1.设置列个数->最少有3个
     strlist.clear();
     strlist.append(listAll->takeFirst());                       // 取走
-    if(strlist.takeFirst() != "columnCount"){return false;}     // 没有关键字
+    if(strlist.takeFirst() != "columnCount")
+    {
+        // 没有关键字
+        qDebug()<<QString("no key") + QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__);
+        return false;
+    }
     str = strlist.first();
     columnCount = str.toInt();
     if(columnCount<3)columnCount=3;
@@ -110,10 +116,14 @@ bool listAll2tableWidget(QTableWidget *table,QList<QStringList> *listAll)
     // 2.2.拉伸属性和列宽 ->最后两个不能拉伸->最后两个固定为20
     strlist.clear();
     strlist.append(listAll->takeFirst());                // 取走
-    if(strlist.takeFirst()!="columnWidth"){return false;} // 没有关键字
+    if(strlist.takeFirst()!="columnWidth")
+    {// 没有关键字
+        qDebug()<<QString("no key") + QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__);
+        return false;
+    }
     for(int column = 0;column < strlist.size();column++)
     {
-        if(column>=table->columnCount()){ break;}
+        if(column>=table->columnCount()){ break;}// 列数据没有实际的多，跳出
         int width=strlist.at(column).toInt();
         if(width<20)width=20;
         table->setColumnWidth(column,width);
@@ -127,7 +137,13 @@ bool listAll2tableWidget(QTableWidget *table,QList<QStringList> *listAll)
     // 2.3.设置头标题
     strlist.clear();
     strlist.append(listAll->takeFirst());        // 取走
-    if(strlist.takeFirst()!="horizontalHeaderItem"){return false;} // 没有关键字
+    if(strlist.takeFirst()!="headerItemText")
+    {
+        qDebug()<<QString("no key") + QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__);
+        // 没有关键字
+        return false;
+    }
+
     table->setHorizontalHeaderLabels(strlist);
 
     // 2.4.预留
@@ -147,10 +163,13 @@ bool listAll2tableWidget(QTableWidget *table,QList<QStringList> *listAll)
 
     // 3.将文件内容转换成table
     QTableWidgetItem *item;
+    qDebug()<< "listAll->size() = " << listAll->size();
+    table->setRowCount(listAll->size());        // 设置列个数
     for(int row=0;row<listAll->size();row++)
     {
         strlist.clear();
         strlist.append(listAll->at(row));
+        strlist.removeFirst();                      // 根据协议，第一个数据无效
         for(int column=0;column<strlist.size();column++)
         {
             if(column>=table->columnCount()){break;}

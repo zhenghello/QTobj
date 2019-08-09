@@ -289,5 +289,37 @@ void canSend::on_button_temp_clicked()
     }
 //      cp->setCanPack_ArgNum(20);
 //      cp->table_init(20);
+}
+
+// 选择升级功能
+void canSend::on_button_upgrade_modular_clicked()
+{
+//    if(sshPort->isConnected()==false)
+//    {
+//        QMessageBox::warning(NULL, QString("No Open SSH"),QString("No Open SSH\r\n")+QString::fromLocal8Bit(__FILE__)+QString::number(__LINE__)+QString::fromLocal8Bit(__FUNCTION__));
+//        return;
+//    }
+    // 由于升级需要用到ssh的发送文件和命令功能，要把ssh的接口传递进去
+    if(pupgrade == NULL)
+    {
+        // 直接跳去注释区间
+        ui->tabWidget->setCurrentIndex(2);
+        pupgrade = new UpgradeModel(this,sshPort);
+        pupgrade->setWindowFlags(pupgrade->windowFlags()|Qt::Window);//设置为外框
+        pupgrade->show();
+    }
+    else
+    {
+        pupgrade->deleteLater();
+        pupgrade = NULL;
+    }
+}
+
+
+
+
+
+void canSend::on_pushButton_debug_clicked()
+{
 
 }

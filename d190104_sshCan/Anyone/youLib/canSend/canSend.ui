@@ -453,7 +453,7 @@
       <enum>QTabWidget::Triangular</enum>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
      <property name="usesScrollButtons">
       <bool>false</bool>
@@ -966,6 +966,13 @@
           <widget class="QPushButton" name="button_temp">
            <property name="text">
             <string>温控调试</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button_upgrade_modular">
+           <property name="text">
+            <string>板卡升级模块</string>
            </property>
           </widget>
          </item>
@@ -2811,7 +2818,15 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_8">
        <item>
-        <layout class="QVBoxLayout" name="verticalLayout_test"/>
+        <layout class="QVBoxLayout" name="verticalLayout_test">
+         <item>
+          <widget class="QPushButton" name="pushButton_debug">
+           <property name="text">
+            <string> 测试按键</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
