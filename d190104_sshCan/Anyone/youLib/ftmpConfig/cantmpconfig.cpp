@@ -15,6 +15,7 @@ canTmpConfig::canTmpConfig(QWidget *parent) :QWidget(parent),ui(new Ui::canTmpCo
 
     // 插入canPack
     ui->gridLayout_cp->addWidget(configTmp);
+
     // 关联信号
     connect(configTmp,  SIGNAL(send_can_pack(QString)),this,SIGNAL(send_can_pack(QString)));
 

@@ -5,6 +5,8 @@
 #include <QTableWidget>
 #include <QHeaderView>
 
+#include "errtable.h"
+#include "command.h"
 
 class canPack : public QTableWidget
 {

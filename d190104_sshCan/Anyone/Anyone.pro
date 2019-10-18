@@ -29,6 +29,7 @@ INCLUDEPATH += ./youLib/fdebug/ \
                ./youLib/rtabwidget/ \
                ./youLib/canPack/ \
                ./youLib/ftmpConfig/ \
+               ./youLib/fOptMotor/ \
                ./youLib/upgradeMode/ \
 
 SOURCES += main.cpp\
@@ -54,7 +55,8 @@ SOURCES += main.cpp\
     youLib/FtreeDateBase/ftreeDabeBase.cpp \
     youLib/FtreeDateBase/timeSeqExplain.cpp \
     youLib/fdebug/fdebug.cpp \
-    youLib/upgradeMode/upgradeModel.cpp
+    youLib/upgradeMode/upgradeModel.cpp \
+    youLib/fOptMotor/fOptMotor.cpp
 
 HEADERS  += anyone.h \
     youLib/fssh/fssh.h \
@@ -78,7 +80,8 @@ HEADERS  += anyone.h \
     youLib/FtreeDateBase/ftreeDabeBase.h \
     youLib/FtreeDateBase/timeSeqExplain.h \
     youLib/fdebug/fdebug.h \
-    youLib/upgradeMode/upgradeModel.h
+    youLib/upgradeMode/upgradeModel.h \
+    youLib/fOptMotor/fOptMotor.h
     ssh.h
 
 
@@ -92,7 +95,8 @@ FORMS    += anyone.ui \
     youLib/ftmpConfig/cantmpconfig.ui \
     youLib/FtreeDateBase/ftreeDabeBase.ui \
     youLib/fdebug/fdebug.ui \
-    youLib/upgradeMode/upgradeModel.ui
+    youLib/upgradeMode/upgradeModel.ui \
+    youLib/fOptMotor/fOptMotor.ui
 
 LIBS += -L$$PWD/qssh/release/lib -lQSsh    # ssh need
 INCLUDEPATH += $$PWD/qssh/src/libs/ssh     # ssh need

@@ -1,9 +1,9 @@
 [ZhengCan3]
 have_config=true
 plainTextEdit_in="<0x00c00000> [8] aa d4 03 01 00 23 fb 55 \n\n<0x00c04000> [8] aa d8 2f f0 00 00 45 3a \n<0x00c08100> [8] 45 52 52 5f 44 42 5f 43 \n<0x00c08200> [8] 4d 44 5f 46 4f 52 4d 41 \n<0x00c08300> [8] 54 5f 44 41 54 41 4c 45 \n<0x00c08400> [8] 4e 21 5c 63 61 6e 5f 72 \n<0x00c08500> [8] 65 63 65 2e 63 30 32 34 \n<0x00c0c600> [4] 33 0d 0b 55 \n\n<0x00c04000> [8] aa c0 05 01 00 23 00 00 \n<0x00c0c000> [2] e9 55 "
-checkBox_recvFrame=false
+checkBox_recvFrame=true
 checkBox_sendFrame=true
-lineEdit_IP=192.168.8.212
+lineEdit_IP=192.168.8.64
 
 [canDump]
 have_config=true
@@ -27,7 +27,7 @@ checkBox_hide=false
 
 [canSendSSH]
 have_config=true
-lineEdit_IP=192.168.8.212
+lineEdit_IP=192.168.8.64
 lineEdit_name=root
 lineEdit_password=JDm&069401402
 spinBox_port=22
@@ -75,7 +75,7 @@ horizontalSlider_tree=516
 
 [canRecvSSH]
 have_config=true
-lineEdit_IP=192.168.8.212
+lineEdit_IP=192.168.8.64
 lineEdit_name=root
 lineEdit_password=JDm&069401402
 spinBox_port=22
@@ -95,7 +95,7 @@ lineEdit_sendSingle=
 have_config=true
 lineEdit_dat=.\\config\\text.dat
 lineEdit_excel=.\\config\\canExplain.xlsx
-lineEdit_key=KEY
+lineEdit_key=7092
 spinBox_FindKeyColumn=1
 checkBox_hide=false
 
@@ -199,10 +199,11 @@ have_config=true
 
 [canFrameSend]
 have_config=true
+plainTextEdit_BatchOrder=0x00 0x01 aa 00 03 01 00 01 05 55\n0x00 0x02 aa 00 03 01 00 01 05 55\n0x00 0x03 aa 00 03 01 00 01 05 55\n0x00 0x04 aa 00 03 01 00 01 05 55\n0x00 0x05 aa 00 03 01 00 01 05 55\n
 
 [ZhengKaiPengMessage]
 have_config=true
-textEdit_msg=1114 备注：\n(主机)03号电机：样本注射器\n(主机)5号电机：样本注射器\n(主机)10号电机：免疫混匀注射器\n(主机)09号电机：采样注射器\n\n\n不能正常识别命令码对象，过滤异常\n中文编码解析异常\n\n任\n1.式子定高和穿刺位\n发送命令冲突\n2.单步运行的电机对象为0\n\n0251\n0356\n0x01 0x00 aa f8 05 23 02 10 41 c0 33 55
+textEdit_msg=1114 备注：\n(主机)03号电机：样本注射器\n(主机)5号电机：样本注射器\n(主机)10号电机：免疫混匀注射器\n(主机)09号电机：采样注射器\n\n\n不能正常识别命令码对象，过滤异常\n中文编码解析异常\n\n任\n1.式子定高和穿刺位\n发送命令冲突\n2.单步运行的电机对象为0\n\n0251\n0356\n0x01 0x00 aa f8 05 23 02 10 41 c0 33 55\n\nsh /dymind/app/upgrade/script/up_crp_mcu.sh \n\n\n\n\n
 spinBox=400
 
 [sshFile]
@@ -212,3 +213,8 @@ lineEdit_excel=.\\config\\sshFile.xlsx
 lineEdit_key=KEY
 spinBox_FindKeyColumn=1
 checkBox_hide=false
+
+[FOptMotor_msg]
+have_config=true
+textEdit_msg=
+spinBox=200

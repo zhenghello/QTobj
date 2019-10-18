@@ -29,6 +29,8 @@ private slots:
 
     void on_pushButton_openConfig_clicked();
 
+    void on_b_5_clicked();
+
 private:
     Ui::AnyOne *ui;
     void dat_config_save(void);

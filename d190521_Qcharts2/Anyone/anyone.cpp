@@ -28,7 +28,6 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     hlayout->addWidget(Fdebug::myDebug());
  // hlayout->addWidget(Fdebug::myShow());
  // hlayout->addWidget(Fdebug::myTest());
-
     dat_config_load();  // 文件导入
 
 
@@ -66,7 +65,6 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     series->attachAxis(axisY);
 
     hlayout->addWidget(chartView);
-
 
 
     // 来个定时器

@@ -11,11 +11,45 @@ UpgradeModel::UpgradeModel(QWidget *parent, FsshGui *pSshPort) : QWidget(parent)
 {
     //QTableWidget qtw;
     ui->setupUi(this);
-    sshPort = pSshPort;
-    // 导入配置
-    QString strPath = "./config/upgradeModelFile/upgarde_config_file.dat";
 
-    dat2tableWidget(strPath,ui->tableWidget);
+    // ssh操作对象
+    sshPort = pSshPort;
+
+    // 导入配置
+    QString strPath = ui->label_tablePath->text();
+    tableWidget = new QTableWidget(this);
+    layout()->addWidget(tableWidget);
+    dat2tableWidget(strPath,tableWidget);
+    ui->label_table->deleteLater();
+
+    // 提前上传项目的文件夹内容
+    //
+    QList<QTableWidgetItem*> proList = tableWidget->findItems(QString("Dir"),Qt::MatchExactly);
+    QStringList strList;
+    strList.clear();
+    // 导出所有项目名
+    for(int i=0;i<proList.size();i++)
+    {
+        strList.append(tableWidget->item(proList[i]->row(),0)->text());
+    }
+    // 选择要用的项目
+    proName = QInputDialog::getItem(this,QString::fromLocal8Bit("选择项目"),QString::fromLocal8Bit("选择项目"),strList);
+    qDebug()<<proName;
+    ui->label_name->setText(QString::fromLocal8Bit("项目名:")+proName);
+    // 找到对应项目的上传路径
+    // 0列：项目名
+    // 1列：关键字-Dir
+    // 2列：本地路径
+    // 3列：远程路径
+    int i;
+    for(i=0;i<proList.size();i++)
+    {
+        if(tableWidget->item(proList[i]->row(),0)->text() == proName)
+        {
+            break;
+        }
+    }
+    sshPort->SSH_uploadDir(tableWidget->item(proList[i]->row(),2)->text(), tableWidget->item(proList[i]->row(),3)->text());
 
 }
 
@@ -23,94 +57,58 @@ UpgradeModel::~UpgradeModel()
 {
     delete ui;
 }
-
-// 1114中，文件对应的升级命令
-const QString order1114[8][4]={
-    "dbmcu",  ".hex", "./config/upgradeModelFile/1114/upgrade/mcu/"  ,"sh /dymind/app/upgrade/script/up_driver_mcu_1114.sh"  ,
-    "asmcu",  ".hex", "./config/upgradeModelFile/1114/upgrade/mcu/"  ,"sh /dymind/app/upgrade/script/up_as_mcu_1114.sh"      ,
-    "crpmcu", ".hex", "./config/upgradeModelFile/1114/upgrade/mcu/"  ,"sh /dymind/app/upgrade/script/up_crp_mcu_1114.sh"     ,
-    "rfmcu",  ".hex", "./config/upgradeModelFile/1114/upgrade/mcu/"  ,"sh /dymind/app/upgrade/script/up_rf_mcu.sh"           ,
-    "imemcu", ".hex", "./config/upgradeModelFile/1114/upgrade/mcu/"  ,"sh /dymind/app/upgrade/script/up_immune_mcu_1114.sh"  ,
-    "dbfpga", ".rbf", "./config/upgradeModelFile/1114/upgrade/fpga/" ,"sh /dymind/app/upgrade/script/up_driver_fpga_1114.sh" ,
-    "asfpga", ".rbf", "./config/upgradeModelFile/1114/upgrade/fpga/" ,"sh /dymind/app/upgrade/script/up_as_fpga_1114.sh"     ,
-    "mbfpga", ".rbf", "./config/upgradeModelFile/1114/upgrade/fpga/" ,"sh /dymind/app/upgrade/script/up_main_fpga.sh"        ,
-};
+#define FILE_RECOGNIZE_KET_ROW_NUM      1   // 文件识别列号
+#define REMOTE_PATH_ROW_NUM             2   // 远程路径
+#define SSH_ORDER_ROW_NUM               3   // 文件识别列号
 
 
-
-// const QString upgradeRbfFileName[]={"dbfpga","asfpga","mbfpga"};
-
-
-// 选择文件并升级
-int order1114_index=0;
-void UpgradeModel::on_pushButton_clicked()
+void UpgradeModel::on_pushButton_2_clicked()
 {
-    // 打开文件
-    QString fileName = QFileDialog::getOpenFileName(this,QString(""),QString("./config"),"*.hex *.rbf *.rpd");
+    // 打开文件 -> 文件名：fileName
+    QString fileName = QFileDialog::getOpenFileName(this,QString(""),QString("./config/upgradeModelFile"),"*.hex *.rbf *.rpd");
     if(nullptr == fileName)return; //没有选择就取消
 
-    // 判断文件名-获取偏移
-    for(order1114_index=0;order1114_index<8;order1114_index++)
-    {
-        if(fileName.indexOf(order1114[order1114_index][0]) !=-1)break;
-    }
-    // 没有合适文件
-    if(order1114_index >=8)
-    {
-        QMessageBox::warning(NULL, QString("File Error"),QString("File Error\r\n")+QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__));
-        return;
-    }
-    // 复制文件
-    QString objName = order1114[order1114_index][0]+order1114[order1114_index][1];
-    qDebug()<<fileName;
-    qDebug()<<order1114[order1114_index][2]+objName;
-    QFile::copy(fileName,order1114[order1114_index][2]+objName);
+    // 抽出 proName 的所有关键字对象
+    QList<QTableWidgetItem*> tabList = tableWidget->findItems(QString(proName),Qt::MatchExactly);
 
-    // 上传文件
-    upgradeOrder();
-    //
-    QTimer::singleShot(10000,this,SLOT(sendSsCmd()));
+    // 找到对应的行
+    for(int i=0; i<tabList.size(); i++)
+    {
+        int row = tabList[i]->row(); // 当前行号
+        objName         = fileName;
+        sshOrder        = tableWidget->item(row, SSH_ORDER_ROW_NUM)->text(); // 4列存放着要执行的命令
 
+        // 匹配到要升级的文件
+        if(fileName.indexOf(tableWidget->item(row, FILE_RECOGNIZE_KET_ROW_NUM)->text()) !=-1)
+        {
+            // 上传文件
+            sshPort->SSH_uploadFile(objName, tableWidget->item(row, REMOTE_PATH_ROW_NUM)->text());
+            qDebug()<<objName;
+            qDebug()<<tableWidget->item(row, REMOTE_PATH_ROW_NUM)->text();
+            // 发送升级命令,在ftp数据传输完成后触发
+             connect(sshPort,SIGNAL(sFtpFinished(QSsh::SftpJobId, const QString))    ,this, SLOT(sFtpFinished(QSsh::SftpJobId, const QString))); // FTP文件操作结束信号
+             return;
+        }
+    }
+    QMessageBox::warning(NULL, QString("File Error"),QString("File Error\r\n")+QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__));
 }
+
 // 延迟发送命令
-void UpgradeModel::sendSsCmd(void)
+void UpgradeModel::sFtpFinished(QSsh::SftpJobId job, const QString &error)
 {
-    // 发送升级命令
-    sshPort->sendSshCmd(order1114[order1114_index][3]);
-}
-// 升级操作
-// 复制文件到 upgrade
-void UpgradeModel::upgradeOrder()
-{
-    if(sshPort->isConnected() == false)
+    if(error.isEmpty())
     {
-        QMessageBox::warning(NULL, QString("No Open SSH"),QString("No Open SSH\r\n")+QString::fromLocal8Bit(__FILE__)+QString::number(__LINE__)+QString::fromLocal8Bit(__FUNCTION__));
-        return;
+        // 发送升级命令
+        sshPort->sendSshCmd(sshOrder);
     }
-    // 升级文件存放路径
-    QString upgrade_file_path;
-    QString remoteDirPath = "/dymind/app/";
-    if(ui->radioButton_1114->isChecked())
+    else
     {
-        upgrade_file_path = ui->lineEdit_1114->text();
+        QMessageBox::warning(NULL, QString("File Error"),QString("SSH upload File Error\r\n")+QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__));
     }
-    else if(ui->radioButton_1101->isChecked())
-    {
-        upgrade_file_path = ui->lineEdit_1101->text();
-    }
-    else if(ui->radioButton_other->isChecked())
-    {
-        upgrade_file_path = ui->lineEdit_other->text();
-    }
-    //判断文件存在
-    QFileInfo file(upgrade_file_path);
-    if(file.isDir()==false)
-    {
-        QString msgStr = QString("\r\n")+QString::fromLocal8Bit(__FILE__)+QString::number(__LINE__)+QString::fromLocal8Bit(__FUNCTION__);
-        QMessageBox::warning(NULL, QString("No Dir"),QString("No File : ")+upgrade_file_path+msgStr);
-        return;
-    }
-    // 上传文件
-    sshPort->SSH_uploadDir(upgrade_file_path, remoteDirPath);
+    qDebug()<< QString("SftpJobId = %1,error=%2").arg(job).arg(error);
+    disconnect(sshPort,SIGNAL(sFtpFinished(QSsh::SftpJobId, const QString))    ,this, SLOT(sFtpFinished(QSsh::SftpJobId, const QString))); // FTP文件操作结束信号
 
 }
+
+
+

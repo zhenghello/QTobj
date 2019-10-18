@@ -244,6 +244,14 @@ void FsshGui::SSH_uploadDir(const QString &localDirPath,    const QString &remot
         QMessageBox::warning(NULL, QString("No Open SSH3"),QString("No Open SSH"));
         return;
     }
+
+    QFileInfo dir(localDirPath);
+    if(dir.isDir() == false)// 没有文件夹就跳过
+    {
+        sshOut->setTextStyle("Path error",Qt::white,Qt::red,12);
+        QMessageBox::warning(NULL, QString("Path error"),QString("localDirPath is Error"));
+        return;
+    }
     QSsh::SftpJobId job = myssh.SSH_uploadDir(localDirPath,remoteDirPath);// 发送文件夹命令
     ftpBox->setText(QString("SSH_uploadDir : ")+localDirPath+QString(" -> ")+remoteDirPath);
     ftpBox->show();

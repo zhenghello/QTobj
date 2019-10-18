@@ -1,9 +1,10 @@
+// 这个文件是对ssh的功能接口的包装
 #ifndef FSSH_H
 #define FSSH_H
 
 #include <QObject>
 
-
+// ssh 连接需要的头文件
 #include "ssherrors.h"
 #include "sftpdefs.h"
 #include "sshconnection.h"

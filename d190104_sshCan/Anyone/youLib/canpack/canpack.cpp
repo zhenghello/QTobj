@@ -27,7 +27,7 @@ void canPack::table_init(int argNum)
     clear ();
     //设置行列
     setRowCount(2);               // 行数
-    setColumnCount(columnNum);  // 列数
+    setColumnCount(columnNum);    // 列数
     //设置行表头和列表头隐藏
     horizontalHeader()->hide();
     verticalHeader()->hide();
@@ -35,11 +35,18 @@ void canPack::table_init(int argNum)
     verticalHeader()->setDefaultSectionSize(CELL_HEIGHT);    //设置默认行高
     //设置内容->创建一堆单元格
     QTableWidgetItem *qtab;
-    for(i=0;i<columnNum;i++)
+    for(i=0;i<8;i++)
     {
         //  重入出错
         qtab = new QTableWidgetItem();
         qtab->setText("00");
+        setItem(0,i,qtab);
+    }
+    for(;i<columnNum;i++)
+    {
+        //  重入出错
+        qtab = new QTableWidgetItem();
+        qtab->setText("");
         setItem(0,i,qtab);
     }
     // 设置头两个ID选项默认为空
@@ -58,17 +65,19 @@ void canPack::table_init(int argNum)
     qtab->setBackgroundColor(QColor(200, 200, 100));//颜色
     qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
     qtab->setText("aa");
-    //setItem(0,0,qtab);
 
     qtab = item(0,columnNum-1);
     qtab->setBackgroundColor(QColor(200, 200, 100));//颜色
     qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
     qtab->setText("55");
-    //setItem(0,columnNum-1,qtab);
+
+    qtab = item(0,columnNum-2);// 校验
+    qtab->setBackgroundColor(QColor(100, 200, 200));//颜色
+    qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
 
     qtab = item(0,4);   // 长度
     qtab->setBackgroundColor(QColor(200, 200, 200));//颜色
-    qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
+    //qtab->setFlags(qtab->flags() & (~Qt::ItemIsEditable));//不可编辑
     qtab->setText(QString::number(argNum+3));
     //setItem(0,2,qtab);
 
@@ -125,7 +134,7 @@ void canPack::composeStr(void)
     for(i=3+2;i<columnCount()-2;i++)
     {
         qtab = item(0,i);
-        if ( qtab == NULL || (qtab->text() == "") )continue;
+        if ( qtab == NULL || (qtab->text().trimmed() == "") )continue;
         else count++;
     }
     qtab = item(0,2+2);

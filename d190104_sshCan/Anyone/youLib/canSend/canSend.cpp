@@ -2,7 +2,7 @@
 #include "ui_canSend.h"
 
 #include "canpack.h"
-canPack *cp;
+
 
 canSend::canSend(QWidget *parent, QString titleName) :QWidget(parent),ui(new Ui::canSend)
 {
@@ -34,18 +34,18 @@ canSend::canSend(QWidget *parent, QString titleName) :QWidget(parent),ui(new Ui:
     ui->label_file->deleteLater();
     connect(treeFile,SIGNAL(sendMsgTree(QTreeWidgetItem*,int)),this,SLOT(fileTreeOperate(QTreeWidgetItem*,int)));   // 将对tree的右击事件转到本地处理
 
-    //主显示框
+    // 选择 ->主显示框
     ui->tabWidget->setCurrentWidget(ui->tab_tree);
-
-    // 温度调试
-    pTmpCfg = NULL;
+   // ui->tabWidget->setCurrentWidget(ui->tab_base);
+    //基本框
+    canPack *cp;
+    cp = new canPack(this,12);
+    ui->tab_base->layout()->addWidget(cp);
 
     // 测试
-    cp = new canPack(this,10);
-    cp->setWindowFlags(cp->windowFlags()|Qt::Window);//设置为外框
-    // cp->show();
-    // cp->setCanPack_ArgNum(20);
-    // ui->verticalLayout_test->addWidget(cp);
+
+    //QTimer::singleShot(10000, this, SLOT(on_button_upgrade_modular_clicked()));
+
 }
 canSend::~canSend()
 {
@@ -57,7 +57,11 @@ void canSend::on_button_reboot_clicked()
 {
     if(sshPort->isConnected())
     {
-        sshPort->sendSshCmd("sh /dymind/appStart.sh");   // 发送SSH命令
+        sshPort->sendSshCmd("sh /dymind/appStart.sh");  // 发送SSH命令
+        ui->button_reboot->setEnabled(false);           //
+
+        ui->tabWidget->setCurrentIndex(2);                                     // 直接跳去SSH显示区
+        QTimer::singleShot(62000, this, SLOT(button_reboot_setEnableTrue()));  // 不让再按按键
         QTimer::singleShot(60000, sshPort, SLOT(closeSsh()));  // 1分钟后关闭ssh
         QTimer::singleShot(62000, sshPort, SLOT(openSsh()));   // 再62秒后打开ssh
 //        QMessageBox msg(QMessageBox::NoIcon, QString("Please Wait"), QString("Please Wait reboot"));
@@ -71,6 +75,15 @@ void canSend::on_button_reboot_clicked()
         msg.exec();
     }
 }
+
+// button_reboot()
+void canSend::button_reboot_setEnableTrue(void)
+{
+    ui->button_reboot->setEnabled(true);
+    ui->tabWidget->setCurrentIndex(1);                                     // 直接跳回命令显示区
+
+}
+
 // 文件相关的树，发送出来的命令
 void canSend::fileTreeOperate(QTreeWidgetItem *tree,int column)
 {
@@ -225,6 +238,44 @@ void canSend::sendCanMsg(QString str)
         sshPort->sendSshCmd(canStr);
     }
 }
+// 按下批量发送操作 ------------------------------------------------ begin
+void canSend::on_pushButton_bathcOrder_clicked()
+{
+    if(sshPort->isConnected()==false)
+    {
+        QMessageBox::warning(NULL, QString("No Open SSH5"),QString("No Open SSH"));
+        return;
+    }
+    strList_batch = ui->plainTextEdit_BatchOrder->toPlainText().split("\n");
+    QString bstr;
+    // 过滤无效信息
+    for(int i=0; i<strList_batch.size(); i++)
+    {
+        QString str = strList_batch.at(i);
+        if(str.indexOf("0x00") == 9)
+        {
+            bstr += str.mid(9)+"\n";
+        }
+        qDebug()<<"u="<<str.indexOf("0x00");
+    }
+    ui->plainTextEdit_BatchOrder->setPlainText(bstr);
+    strList_batch = ui->plainTextEdit_BatchOrder->toPlainText().split("\n");
+    qDebug()<<strList_batch.size();
+
+    connect(&timer_batch, SIGNAL(timeout()), this, SLOT(bathcOrder_timeout()) );
+    timer_batch.start(20);
+}
+void canSend::bathcOrder_timeout()
+{
+    QString str = strList_batch.takeFirst();
+    sshPort->sendSshCmd(str);
+    if(strList_batch.size() == 0)
+    {
+        timer_batch.stop();
+        disconnect(&timer_batch, SIGNAL(timeout()), this, SLOT(bathcOrder_timeout()) );
+    }
+}
+// 按下批量发送操作 ------------------------------------------------ end
 
 // ******************************************** 外部函数 ******************************************** begin
 
@@ -243,7 +294,7 @@ void canSend::dat_config_save(void)
     save_config.remove(windowTitle());          // 删除组
     save_config.beginGroup(windowTitle());      // 组操作------------------------------------------begin
     save_config.setValue ("have_config"        ,true);
-
+    save_config.setValue ("plainTextEdit_BatchOrder"        ,ui->plainTextEdit_BatchOrder->toPlainText());
     // ------------------------ 配置的保存 ------------------------
 
 
@@ -267,10 +318,13 @@ void canSend::dat_config_load(void)
         return;
     }
     // ------------------------ 配置的读取 ------------------------
-
+    ui->plainTextEdit_BatchOrder->setPlainText(load_config.value("plainTextEdit_BatchOrder").toString());
 
     load_config.endGroup();                            // 组操作------------------------------------------end
 }
+
+
+
 // 按下调试温度按键
 void canSend::on_button_temp_clicked()
 {
@@ -291,22 +345,40 @@ void canSend::on_button_temp_clicked()
 //      cp->table_init(20);
 }
 
+// 电机调试模块
+void canSend::on_button_motor_clicked()
+{
+    if(pMotor == NULL)
+    {
+        pMotor = new FOptMotor(this);
+        pMotor->setWindowFlags(pMotor->windowFlags()|Qt::Window);//设置为外框
+        pMotor->show();
+        connect(pMotor,SIGNAL(send_can_pack(QString)),this,SLOT(sendCanMsg(QString)));
+    }
+    else
+    {
+        disconnect(pMotor,SIGNAL(send_can_pack(QString)),this,SLOT(sendCanMsg(QString)));
+        pMotor->deleteLater();
+        pMotor = NULL;
+    }
+}
 // 选择升级功能
 void canSend::on_button_upgrade_modular_clicked()
 {
-//    if(sshPort->isConnected()==false)
-//    {
-//        QMessageBox::warning(NULL, QString("No Open SSH"),QString("No Open SSH\r\n")+QString::fromLocal8Bit(__FILE__)+QString::number(__LINE__)+QString::fromLocal8Bit(__FUNCTION__));
-//        return;
-//    }
     // 由于升级需要用到ssh的发送文件和命令功能，要把ssh的接口传递进去
     if(pupgrade == NULL)
     {
-        // 直接跳去注释区间
+        if(sshPort->isConnected()==false)
+        {
+            QMessageBox::warning(NULL, QString("No Open SSH4"),QString("No Open SSH"));
+            return;
+        }
+        // 直接跳去SSH显示区
         ui->tabWidget->setCurrentIndex(2);
         pupgrade = new UpgradeModel(this,sshPort);
         pupgrade->setWindowFlags(pupgrade->windowFlags()|Qt::Window);//设置为外框
         pupgrade->show();
+        pupgrade->move(100,100);
     }
     else
     {
@@ -318,8 +390,16 @@ void canSend::on_button_upgrade_modular_clicked()
 
 
 
-
 void canSend::on_pushButton_debug_clicked()
 {
 
 }
+
+
+
+
+void canSend::on_button_text_clicked()
+{
+
+}
+

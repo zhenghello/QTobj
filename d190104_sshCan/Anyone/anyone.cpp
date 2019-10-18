@@ -29,14 +29,15 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     ui->verticalLayout_main->insertWidget(0,myShow);
     ui->label_nothing->deleteLater();
     move(0, 0);
+    myShow->setTextStyle(QString("Building Time:")+QString(__DATE__)+QString("--")+QString(__TIME__), QColor(255,255,255), QColor(0,255,0),15);
 
-// Can消息发送
+    // Can消息发送
     canFrameSend = new canSend(this,"canFrameSend");
     canFrameSend->setWindowFlags(myShow->windowFlags()|Qt::Window);//设置为从类
     canFrameSend->show();
     canFrameSend->move(width(),10);
     connect(canFrameSend,SIGNAL(sFtpFinished(QSsh::SftpJobId, const QString)),this,SLOT(OnSftpFinished(QSsh::SftpJobId , const QString)));
-// Can消息接收
+    // Can消息接收
     canFrameRecv = new canRecv(this,"canFrameRecv");
     canFrameRecv->setWindowFlags(myShow->windowFlags()|Qt::Window);//设置为从类
     canFrameRecv->show();
@@ -44,10 +45,12 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     on_checkBox_recvFrame_clicked();    // can窗口的对应操作
     on_checkBox_sendFrame_clicked();
 
-// 备注信息框
+    // 备注信息框
     messageBoard* youMessage = new messageBoard(this,"ZhengKaiPengMessage");
     ui->verticalLayout_msg->addWidget(youMessage);
     ui->label_msg->deleteLater();
+
+    //on_pushButton_openSSH_clicked(); // 打开ssh
 
 }
 AnyOne::~AnyOne()
@@ -213,3 +216,9 @@ void AnyOne::dat_config_load(void)
 
 
 
+
+void AnyOne::on_b_5_clicked()
+{
+
+
+}
