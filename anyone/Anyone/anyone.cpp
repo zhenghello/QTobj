@@ -1,13 +1,7 @@
 ﻿#include "anyone.h"
 #include "ui_anyone.h"
-#include<QSplitter>
-
-#include<QSettings>
-
-QString     filename = ".\\config\\anyone_config.dat";
 
 
-Fdebug *mydebug;
 QTimer  myTimer;
 AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
 {
@@ -15,11 +9,13 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
 
     // 初始化外部器件
     mydebug = Fdebug::myDebug();
-    QHBoxLayout *hlayout = new QHBoxLayout(ui->frame_user);// 为frame_user添加一个布局
+    mydebug->show();// 如果没个归属就会关闭不掉
 
-    hlayout->addWidget(Fdebug::myDebug());
- // hlayout->addWidget(Fdebug::myShow());
- // hlayout->addWidget(Fdebug::myTest());
+    // 右下角小图标功能
+    trayIcon = new QSystemTrayIcon(this);
+    trayIcon->setIcon(QIcon(":/one/icon/happy.ico"));
+    trayIcon->show();
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
     dat_config_load();  // 文件导入
 
@@ -41,7 +37,7 @@ void AnyOne::myTimerOut()
 // 关闭窗体
 void AnyOne::on_pushButton_end_clicked()
 {
-    close();
+    qApp->quit();   // 强制退出程序
 }
 
 
@@ -106,8 +102,7 @@ void AnyOne::on_b103_clicked()
 //备注：
 void AnyOne::dat_config_save(void)
 {
-    QString path = ".\\config\\AllConfig.dat";  // 统一配置地址
-    QSettings save_config(path,QSettings::IniFormat);
+    QSettings save_config(QString("%1\\config\\AllConfig.dat").arg(exePath), QSettings::IniFormat);
     save_config.setIniCodec("GB2312");          //支持中文
     save_config.remove(windowTitle());          // 删除组
     save_config.beginGroup(windowTitle());      // 组操作------------------------------------------begin
@@ -126,11 +121,10 @@ void AnyOne::dat_config_save(void)
 void AnyOne::dat_config_load(void)
 {
     // 打开时间记录
-    QSettings recordOpen(".\\config\\openRecord.dat" , QSettings::IniFormat);
+    QSettings recordOpen(QString("%1\\config\\zRecord.dat").arg(exePath), QSettings::IniFormat);
     recordOpen.setValue(QDateTime::currentDateTime().toString("yyyy-MM-dd--hh-mm-ss"),"");//时间串
 
-    QString path = ".\\config\\AllConfig.dat";          // 统一配置地址
-    QSettings load_config(path,QSettings::IniFormat);
+    QSettings load_config(QString("%1\\config\\AllConfig.dat").arg(exePath), QSettings::IniFormat);// 统一配置地址
     load_config.setIniCodec("GB2312");  // 支持中文
     load_config.beginGroup(windowTitle());              // 组操作------------------------------------------begin
     //判断文件存在

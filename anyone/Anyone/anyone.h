@@ -2,6 +2,8 @@
 #define ANYONE_H
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
+#include<QSettings>
 #include "fdebug.h"
 
 namespace Ui {class AnyOne;}
@@ -31,9 +33,12 @@ private slots:
 private:
     Ui::AnyOne *ui;
 
+    Fdebug *mydebug;
+    QString exePath;                // 可执行文件的路径,即使在其他位置启动，也可以正常找到配置文件
+    QSystemTrayIcon *trayIcon;      // 小图标
+
     void dat_config_save(void);
     void dat_config_load(void);
 };
-QJsonObject treeWidgetItem2jsonObj(QTreeWidgetItem *itemp);
 
 #endif // ANYONE_H

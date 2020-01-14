@@ -27,4 +27,7 @@ HEADERS  += anyone.h \
 FORMS    += anyone.ui \
     ./zLib/fdebug/fdebug.ui
 
+RESOURCES += \
+    anyone.qrc
+
 
