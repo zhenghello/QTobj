@@ -1,9 +1,10 @@
 
 #include "strlist2dat.h"
 #include "strlist2tableWidget.h"
-
+#include <QDebug>
 bool dat2tableWidget(QString datName,QTableWidget *table)
 {
+    qDebug() << "dat2tableWidget:" << datName;
     QList<QStringList> listAll;
     bool bret;
     bret = dat2ListAll(datName,&listAll);
@@ -15,6 +16,7 @@ bool dat2tableWidget(QString datName,QTableWidget *table)
 
 bool tableWidget2dat(QString datName,QTableWidget *table)
 {
+    qDebug() << "tableWidget2dat:" << datName;
     QList<QStringList> listAll;
     bool bret;
     tableWidget2listAll(table,&listAll);

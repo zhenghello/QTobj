@@ -3,12 +3,14 @@
 #include "dat2tableWidget.h"
 #include <QSystemTrayIcon>
 
+
 AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
 {
     ui->setupUi(this);
     // 初始化外部器件
-    mydebug = Fdebug::myqDebug(this); mydebug->show();
+    mydebug = Fdebug::myDebug(this); mydebug->show();
     ui->horizontalLayoutShow->addWidget(mydebug);
+
     // 初始化路径 - 全局通用
     exePath = QCoreApplication::applicationDirPath().replace("/", "\\");
 
@@ -38,18 +40,15 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     // 关联按键
     connect(ui->b1, SIGNAL(clicked()), this, SLOT(b1_clicked()));
     connect(ui->b2, SIGNAL(clicked()), this, SLOT(b2_clicked()));
-
     connect(ui->autoRun, SIGNAL(clicked()), this, SLOT(autoRun_clicked()));
     connect(ui->openConfig, SIGNAL(clicked()), this, SLOT(openConfig_clicked()));           // 进入配置模式
-
     connect(ui->pushButton_save, SIGNAL(clicked()), this, SLOT(dat_config_save()));         // 保存按键
     connect(ui->pushButton_hide, SIGNAL(clicked()), this, SLOT(hide()));                    // 隐藏按键
     connect(ui->pushButton_end,  SIGNAL(clicked()), qApp, SLOT(quit()));                    // 退出按键
-
     qDebug() << "building time" << __DATE__ << __TIME__ ;                                   // 最后编译时间
 
     // table 的初始化
-    ui->tabWidget->setCurrentIndex(1);          // “未完成”是主要显示
+    ui->tabWidget->setCurrentIndex(2);          // “未完成”是主要显示
     tableWidgetInit();
 
     // 自动保存的定时器设置 -> 触发后5分钟启动保存 ->     autoSaveTimer.start();会覆盖之前的定时器
@@ -57,7 +56,13 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     autoSaveTimer.setInterval(5*60*1000);       // 操作后5分钟自动保存
     autoSaveTimer.setSingleShot(true);          // 只能单次触发
 
+    // 添加快速访问table
+    tableFaster = new fTableFast(this,QString("%1\\config\\fileFaster.dat").arg(exePath));
+    ui->verticalLayoutFast->addWidget(tableFaster);
+
+
 }
+
 AnyOne::~AnyOne()
 {
     dat_config_save();
@@ -70,6 +75,14 @@ void AnyOne::autoSaveTimerOut(void)
     dat_config_save();
     qDebug() << "auto save";
 }
+
+void AnyOne::dragEnterEvent(QDragEnterEvent *event)
+{
+    event->acceptProposedAction();  // 接受事件
+    qDebug()<<"AnyOne dragEnterEvent";
+
+}
+
 // 捕获关机事件，关机前保存配置
 bool AnyOne::nativeEvent(const QByteArray &event_Type, void *message, long *result)
 {
@@ -90,7 +103,7 @@ void AnyOne::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
     if (isHidden())
     {
-        show();                // 显示
+        show();             // 显示
         activateWindow();   // 激活，显示到最前端
         raise();            // 提到最前面
     }
@@ -98,17 +111,20 @@ void AnyOne::iconActivated(QSystemTrayIcon::ActivationReason reason)
     {
         hide();
     }
+    if (reason)// 不想看到报警
+    {
+        ;
+    }
 }
 // 允许开机自启动编码
 void AnyOne::registerAppAutoRun(bool bAutoRun)
 {
-    //HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run
     QSettings  reg("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", QSettings::NativeFormat);    // 注册路径
     QString    myAppName = "zNote";    // 注册名
     if (bAutoRun)
     {
+        // 将exe的路径设置为开机自启动的对象
         QString strAppPath = QDir::toNativeSeparators(QCoreApplication::applicationFilePath());
-        //strAppPath.replace(QChar('/'),QChar('\\'),Qt::CaseInsensitive);
         reg.setValue(myAppName, strAppPath);
     }
     else
@@ -116,7 +132,7 @@ void AnyOne::registerAppAutoRun(bool bAutoRun)
         reg.setValue(myAppName, "");
     }
 }
-// 点击“b1” - 导入并保存
+// 点击“b1”
 void AnyOne::b1_clicked(void)
 {
     qDebug() << QString("郑凯鹏 hello");
@@ -124,14 +140,14 @@ void AnyOne::b1_clicked(void)
 // 点击“b2”
 void AnyOne::b2_clicked(void)
 {
-    qDebug() << trayIcon->isVisible();
+
 }
 // 点击“修改配置模式”
 #include<QProcess>
 void AnyOne::openConfig_clicked(void)
 {
     QProcess process;
-    process.startDetached(QString("explorer.exe %1").arg(exePath));
+    process.startDetached(QString("explorer.exe %1%2").arg(exePath).arg("\\config"));
     // 外框模式变为普通
     setWindowFlags(Qt::Window);// 正常显示
     show();raise();
@@ -150,7 +166,7 @@ void AnyOne::autoRun_clicked(void)
 }
 // ******************************************** table 操作 ******************************************** begin
 
-// 初始化一个新的excel表->在导入配置以后生效
+// 1.初始化一个新的excel表->在导入配置以后生效
 void AnyOne::tableWidgetInit(void)
 {
     // 1.常用索引
@@ -164,7 +180,13 @@ void AnyOne::tableWidgetInit(void)
     dat2tableWidget(pathDelete, tableDelete);  // 已删除
     dat2tableWidget(pathMemory, tableMemory);  // 备忘录
     // 2.将未完成的级别进行排序，越大级别越高
+    tableWidgetLevelFix(tableNowork);
+    tableWidgetLevelFix(tableFinish);
+    tableWidgetLevelFix(tableDelete);
+    tableWidgetLevelFix(tableMemory);
     tableNowork->sortByColumn(tableRowLevel);
+    tableMemory->sortByColumn(tableRowLevel);
+
     // 3.未完成没有行就添加一行
     if (tableNowork->rowCount() == 0)
         tableWidgetAddOne( tableNowork, 0, QString("add empty line") );
@@ -173,51 +195,44 @@ void AnyOne::tableWidgetInit(void)
     // 3.使能编辑性
     //tableNowork->horizontalHeader().setResizeMode(QHeaderView::Fixed);
     // 4.使能水平拉伸
-    tableNowork->horizontalHeader()->setSectionResizeMode(tableRowStartTime,    QHeaderView::Fixed);
-    tableNowork->horizontalHeader()->setSectionResizeMode(tableRowChangeTime,    QHeaderView::Fixed);
+    tableNowork->horizontalHeader()->setSectionResizeMode(tableRowStartTime,    QHeaderView::ResizeToContents);
+    tableNowork->horizontalHeader()->setSectionResizeMode(tableRowChangeTime,   QHeaderView::ResizeToContents);
     tableNowork->horizontalHeader()->setSectionResizeMode(tableRowLevel,        QHeaderView::Fixed);
-    tableNowork->horizontalHeader()->setSectionResizeMode(tableRowContent,        QHeaderView::Fixed);
-    tableNowork->setColumnWidth(tableRowStartTime,  43);
-    tableNowork->setColumnWidth(tableRowChangeTime, 43);
-    tableNowork->setColumnWidth(tableRowLevel,        20);
+    tableNowork->horizontalHeader()->setSectionResizeMode(tableRowContent,      QHeaderView::Stretch);
+    tableNowork->setColumnWidth(tableRowLevel,      20);
 
-    tableFinish->horizontalHeader()->setSectionResizeMode(tableRowStartTime,    QHeaderView::Fixed);
-    tableFinish->horizontalHeader()->setSectionResizeMode(tableRowChangeTime,    QHeaderView::Fixed);
+    tableFinish->horizontalHeader()->setSectionResizeMode(tableRowStartTime,    QHeaderView::ResizeToContents);
+    tableFinish->horizontalHeader()->setSectionResizeMode(tableRowChangeTime,   QHeaderView::ResizeToContents);
     tableFinish->horizontalHeader()->setSectionResizeMode(tableRowLevel,        QHeaderView::Fixed);
-    tableFinish->horizontalHeader()->setSectionResizeMode(tableRowContent,        QHeaderView::Fixed);
-    tableFinish->setColumnWidth(tableRowStartTime,  43);
-    tableFinish->setColumnWidth(tableRowChangeTime, 43);
+    tableFinish->horizontalHeader()->setSectionResizeMode(tableRowContent,      QHeaderView::Stretch);
     tableFinish->setColumnWidth(tableRowLevel,      20);
 
-    tableDelete->horizontalHeader()->setSectionResizeMode(tableRowStartTime,    QHeaderView::Fixed);
-    tableDelete->horizontalHeader()->setSectionResizeMode(tableRowChangeTime,    QHeaderView::Fixed);
+    tableDelete->horizontalHeader()->setSectionResizeMode(tableRowStartTime,    QHeaderView::ResizeToContents);
+    tableDelete->horizontalHeader()->setSectionResizeMode(tableRowChangeTime,   QHeaderView::ResizeToContents);
     tableDelete->horizontalHeader()->setSectionResizeMode(tableRowLevel,        QHeaderView::Fixed);
-    tableDelete->horizontalHeader()->setSectionResizeMode(tableRowContent,        QHeaderView::Fixed);
-    tableDelete->setColumnWidth(tableRowStartTime,  43);
-    tableDelete->setColumnWidth(tableRowChangeTime, 43);
+    tableDelete->horizontalHeader()->setSectionResizeMode(tableRowContent,      QHeaderView::Stretch);
     tableDelete->setColumnWidth(tableRowLevel,      20);
 
-    tableMemory->horizontalHeader()->setSectionResizeMode(tableRowStartTime , QHeaderView::Fixed);
-    tableMemory->horizontalHeader()->setSectionResizeMode(tableRowChangeTime, QHeaderView::Fixed);
-    tableMemory->horizontalHeader()->setSectionResizeMode(tableRowLevel     , QHeaderView::Fixed);
-    tableMemory->horizontalHeader()->setSectionResizeMode(tableRowContent   , QHeaderView::Fixed);
-    tableMemory->setColumnWidth(tableRowStartTime   , 0);
-    tableMemory->setColumnWidth(tableRowChangeTime  , 0);
-    tableMemory->setColumnWidth(tableRowLevel       , 0);
+    tableMemory->hideColumn(tableRowStartTime);
+    tableMemory->hideColumn(tableRowChangeTime);
+    tableMemory->horizontalHeader()->setSectionResizeMode(tableRowLevel     ,   QHeaderView::Fixed);
+    tableMemory->horizontalHeader()->setSectionResizeMode(tableRowContent   ,   QHeaderView::Stretch);
+    tableMemory->setColumnWidth(tableRowLevel       ,20);
 
     // 5.1.创建右键菜单 - 未完成
-    tableNowork->addAction(new QAction(mstr_new));
-    tableNowork->addAction(new QAction(mstr_finish));
-    tableNowork->addAction(new QAction(mstr_mulLine));
-    tableNowork->addAction(new QAction(mstr_del));
+    tableNowork->addAction(new QAction(mstr_new     ));
+    tableNowork->addAction(new QAction(mstr_finish  ));
+    tableNowork->addAction(new QAction(mstr_mulLine ));
+    tableNowork->addAction(new QAction(mstr_del     ));
     QObject::connect(tableNowork, SIGNAL(itemPressed(QTableWidgetItem *)), this, SLOT(tableWidgetItemPressed(QTableWidgetItem *)));         // 关联触发按键
     QObject::connect(tableNowork, SIGNAL(itemChanged(QTableWidgetItem *)), this, SLOT(tableWidgetNoworkItemChanged(QTableWidgetItem *)));   // 关联触发按键-自动保存
+    QObject::connect(tableNowork, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetItemDoubleClicked(QTableWidgetItem *)));   // 关联触发按键-自动保存
 
     // 5.2.创建右键菜单 - 已完成
     tableFinish->addAction(new QAction(mstr_nowork));
     tableFinish->addAction(new QAction(mstr_del));
     QObject::connect(tableFinish, SIGNAL(itemPressed(QTableWidgetItem *)), this, SLOT(tableWidgetItemPressed(QTableWidgetItem *)));         // 关联触发按键
-    QObject::connect(tableFinish, SIGNAL(cellChanged(int, int)), &autoSaveTimer, SLOT(start()));                                                        // 关联触发按键-自动保存
+    QObject::connect(tableFinish, SIGNAL(cellChanged(int, int)), &autoSaveTimer, SLOT(start()));                                            // 关联触发按键-自动保存
 
     // 5.3.创建右键菜单 - 已删除
     tableDelete->addAction(new QAction(mstr_nowork));
@@ -234,33 +249,70 @@ void AnyOne::tableWidgetInit(void)
     tableMemory->addAction(new QAction(" "));
     tableMemory->addAction(new QAction(" "));
     tableMemory->addAction(new QAction(mstr_del2    ));
-    QObject::connect(tableMemory, SIGNAL(itemPressed(QTableWidgetItem *)), this, SLOT(tableWidgetItemPressed(QTableWidgetItem *)));         // 关联触发按键
-    QObject::connect(tableMemory, SIGNAL(cellChanged(int, int)), &autoSaveTimer, SLOT(start()));                                            // 关联触发按键-自动保存
+    QObject::connect(tableMemory, SIGNAL(itemPressed(QTableWidgetItem *)), this, SLOT(tableWidgetItemPressed(QTableWidgetItem *)));             // 关联触发按键
+    QObject::connect(tableMemory, SIGNAL(cellChanged(int, int)), &autoSaveTimer, SLOT(start()));                                                // 关联触发按键-自动保存
+    QObject::connect(tableMemory, SIGNAL(itemDoubleClicked(QTableWidgetItem*)), this, SLOT(tableWidgetItemDoubleClicked(QTableWidgetItem *)));  // 关联触发按键-自动保存
 }
-// 1.tableWidgetNowork修改内容后更新时间
-void AnyOne::tableWidgetNoworkItemChanged(QTableWidgetItem *item)
+
+// 2.tableWidget双击，如果是本身是多行，进直接进入多行编辑
+void AnyOne::tableWidgetItemDoubleClicked(QTableWidgetItem *item)
 {
     // 1.获取信息
     QTableWidget *table = item->tableWidget();      // 当前的table
-    int cur_row = table->currentRow();              // 当前行
-    int cur_column = table->currentColumn();        // 当前列
+    int curRow = table->currentRow();               // 当前行
+    //int curColumn = table->currentColumn();       // 当前列
+    if (curRow < 0)
+    {
+        return;
+    }
+    // 2.多行输入
+    if (item->text().contains('\n'))
+    {
+        QString str = QInputDialog::getMultiLineText(this, "多行输入", "单元格一定要输入多行", item->text());
+        if (str.isEmpty() == false)
+        {
+            item->setText(str);
+            item->setTextColor(QColor("blue"));
+            item->setFlags(Qt::ItemIsEnabled|Qt::ItemIsSelectable);
+            /*根据内容调整行高度*/
+            int h = (str.length() - str.remove('\n').length() + 1) * 16;  // 15 和字符格式有关的，用的是字符：宋体9pt
+            table->setRowHeight(curRow, qMax(h, 25));
+        }
+    }
+}
+
+// 3.tableWidgetNowork修改内容后更新时间
+void AnyOne::tableWidgetNoworkItemChanged(QTableWidgetItem *item)
+{
+    // 如果自己的item被删除，又重写，那么就会进来一个空的item
+    if(item->isSelected() == false || item == nullptr)
+    {
+        qDebug()<< "item is null";
+        return;
+    }
+    // 1.获取信息
+    QTableWidget *table = item->tableWidget();      // 当前的table
+    int curRow = table->currentRow();              // 当前行
+    int curColumn = table->currentColumn();        // 当前列
+    if (curRow < 0 || curColumn == tableRowChangeTime)
+    {
+        return;
+    }
     // 2.修改时间
     QString curTime = QDateTime::currentDateTime().toString("yyMMdd");// 当前时间
-    item = table->item(cur_row, tableRowChangeTime);
-    table->editItem(item);
-    item->setText(curTime);
+    table->setItem(curRow, tableRowChangeTime, new QTableWidgetItem(curTime));
     // 3.启动保存倒计时
     autoSaveTimer.start();
 }
-// 1.鼠标右键按下,tableWidgetXX的动作
+// 4.鼠标右键按下,tableWidgetXX的动作
 void AnyOne::tableWidgetItemPressed(QTableWidgetItem *item)
 {
     // 0.只有右击触发有用
     if (qApp->mouseButtons() != Qt::RightButton)return;
     // 1.获取信息
     QTableWidget *table = item->tableWidget();   // 当前的table
-    int cur_row = table->currentRow() ;          // 当前行
-    int cur_column = table->currentColumn();     // 当前列
+    int curRow = table->currentRow() ;          // 当前行
+    //int curColumn = table->currentColumn();     // 当前列
     // 2.捕获动作
     QMenu *menu = new QMenu(table);
     menu->addActions(table->actions());
@@ -276,24 +328,24 @@ void AnyOne::tableWidgetItemPressed(QTableWidgetItem *item)
     // 3.2.多行编辑
     else if (act->text() == mstr_mulLine)
     {
-        QString str = QInputDialog::getMultiLineText(this, "input", "cell input", item->text());
+        QString str = QInputDialog::getMultiLineText(this, "多行输入", "单元格输入", item->text(),nullptr);
         if (str.isEmpty() == false)
         {
             item->setText(str);
             /*根据内容调整行高度*/
-            int h = (str.length() - str.remove('\n').length() + 1) * 13;  // 13 和字符格式有关的，用的是字符：宋体9pt
-            table->setRowHeight(cur_row, qMax(h, 25));
+            int h = (str.length() - str.remove('\n').length() + 1) * 15;  // 15 和字符格式有关的，用的是字符：宋体9pt
+            table->setRowHeight(curRow, qMax(h, 25));
         }
     }
     // 3.2.彻底删除
     else if (act->text() == mstr_del2)
     {
-        table->removeRow(cur_row);    // 彻底删除
+        table->removeRow(curRow);    // 彻底删除
     }
     // 3.3.临时删除
     else if (act->text() == mstr_del)
     {
-        tableWidgetMoveOne(table, cur_row, tableDelete, 0);
+        tableWidgetMoveOne(table, curRow, tableDelete, 0);
         if (table->rowCount() == 0)
         {// 如果用完了，就添加新行
             tableWidgetAddOne(table);
@@ -302,16 +354,16 @@ void AnyOne::tableWidgetItemPressed(QTableWidgetItem *item)
     // 3.4.完成任务
     else if (act->text() == mstr_finish)
     {
-        tableWidgetMoveOne(table, cur_row, tableFinish, 0);
+        tableWidgetMoveOne(table, curRow, tableFinish, 0);
     }
     // 3.5.还原任务未完成
     else if (act->text() == mstr_nowork)
     {
-        tableWidgetMoveOne(table, cur_row, tableNowork, 0);
+        tableWidgetMoveOne(table, curRow, tableNowork, 0);
     }
 }
 
-// table 添加一行
+// 5.table 添加一行
 void AnyOne::tableWidgetAddOne(QTableWidget *table, int row, QString str)
 {
     QString curTime = QDateTime::currentDateTime().toString("yyMMdd");// 当前时间
@@ -321,16 +373,16 @@ void AnyOne::tableWidgetAddOne(QTableWidget *table, int row, QString str)
     item0 = new QTableWidgetItem(curTime);
     item1 = new QTableWidgetItem(curTime);
     item2 = new QTableWidgetItem(str);
-    item3 = new QTableWidgetItem("0");                                  // 默认优先级=最低级
+    item3 = new QTableWidgetItem("10");                                 // 默认优先级=最低级
     table->setItem(row, tableRowLevel       , item3);
-    table->setItem(row, tableRowContent        , item2);
-    table->setItem(row, tableRowChangeTime    , item1);
-    table->setItem(row, tableRowStartTime    , item0);
+    table->setItem(row, tableRowContent     , item2);
+    table->setItem(row, tableRowChangeTime  , item1);
+    table->setItem(row, tableRowStartTime   , item0);
 
     // 重新定位单元格
     table->setFocus();                                                  // 设置为活动
     table->setCurrentCell(0,0);                                         // 选择到新的单元格
-    table->editItem(item2);                                             // 设置为编辑状态
+    table->editItem(item2);
 }
 
 // table 转移一行，把table1的row1转到table2的row2上，并更新时间
@@ -339,16 +391,18 @@ void AnyOne::tableWidgetMoveOne(QTableWidget *table1, int row1, QTableWidget *ta
     QString curTime = QDateTime::currentDateTime().toString("yyMMdd");// 当前时间
     QTableWidgetItem *item0, *item1, *item2, *item3;
     item0 = table1->takeItem(row1, tableRowStartTime    );
-    item1 = table1->takeItem(row1, tableRowChangeTime    );
-    item1->setText(curTime);                                            // 修改编辑时间
-    item2 = table1->takeItem(row1, tableRowContent        );
+    item1 = table1->takeItem(row1, tableRowChangeTime   );
+    item1->setText(curTime);                                          // 修改编辑时间
+    item2 = table1->takeItem(row1, tableRowContent      );
     item3 = table1->takeItem(row1, tableRowLevel);
     table1->removeRow(row1);
     table2->insertRow(row2);
-    table2->setItem(row2, tableRowStartTime    , item0);
-    table2->setItem(row2, tableRowChangeTime, item1);
-    table2->setItem(row2, tableRowContent    , item2);
-    table2->setItem(row2, tableRowLevel     , item3);
+    table2->setItem(row2, tableRowChangeTime    , item1);
+    table2->setItem(row2, tableRowStartTime     , item0);
+    table2->setItem(row2, tableRowContent       , item2);
+    table2->setItem(row2, tableRowLevel         , item3);
+    // 重新定位单元格
+    table2->setCurrentCell(0,0);                                         // 选择到新的单元格
 }
 
 // tableWidget 删除存在空白的空行
@@ -364,6 +418,21 @@ void AnyOne::tableWidgetDelEmptyLine(QTableWidget *table)
             if ((item == NULL) || (item->text() == NULL))
                 table->removeRow(row);
         }
+    }
+}
+// tableWidget 修复级别中的内容长度
+void AnyOne::tableWidgetLevelFix(QTableWidget *table)
+{
+    int rowCount = table->rowCount();
+    for (int row = 0; row < rowCount; row++)
+    {
+
+        QTableWidgetItem *item = table->item(row, tableRowLevel);
+        uint num = item->text().toUInt();
+        QString str = QString("%1").arg(num,2,10,QChar('0'));
+        //delete(item);
+        item = new QTableWidgetItem(str);
+        table->setItem(row, tableRowLevel,item);
     }
 }
 // ******************************************** table 操作 ******************************************** end
@@ -394,21 +463,34 @@ void AnyOne::dat_config_save(void)
     tableWidgetDelEmptyLine(tableMemory);
 
     /* 2.几个文件的每日保存 */
+    // 2.1.检查目录是否存在，若不存在则新建
+    QString dir_str = QString("%1\\config\\backup").arg(exePath);
+    QDir dir;
+    if (!dir.exists(dir_str))
+    {
+        bool res = dir.mkpath(dir_str);
+        qDebug() << "新建目录是否成功" << res;
+    }
+
     QString curTime = QDateTime::currentDateTime().toString("yyMMdd_");// 当前时间
     QString pathNowork2 = QString("%1\\config\\backup\\d%2fileNoWork.dat").arg(exePath).arg(curTime);  // 未完成地址
     QString pathFinish2 = QString("%1\\config\\backup\\d%2fileFinish.dat").arg(exePath).arg(curTime);  // 已完成地址
     QString pathDelete2 = QString("%1\\config\\backup\\d%2fileDelete.dat").arg(exePath).arg(curTime);  // 已删除地址
     QString pathMemory2 = QString("%1\\config\\backup\\d%2fileMemory.dat").arg(exePath).arg(curTime);  // 备忘录地址
-    tableWidget2dat(pathNowork2, ui->tableWidgetNowork);  // 未完成
-    tableWidget2dat(pathFinish2, ui->tableWidgetFinish);  // 已完成
-    tableWidget2dat(pathDelete2, ui->tableWidgetDelete);  // 已删除
-    tableWidget2dat(pathMemory2, ui->tableWidgetMemory);  // 备忘录
+    QString pathFaster2 = QString("%1\\config\\backup\\d%2fileFast.dat").arg(exePath).arg(curTime);  // 备忘录地址
+
+    tableWidget2dat(pathNowork2, tableNowork);  // 未完成
+    tableWidget2dat(pathFinish2, tableFinish);  // 已完成
+    tableWidget2dat(pathDelete2, tableDelete);  // 已删除
+    tableWidget2dat(pathMemory2, tableMemory);  // 备忘录
+    tableWidget2dat(pathFaster2, tableFaster);  // 快速访问
 
     /* 3.几个文件的保存 */
     tableWidget2dat(pathNowork, tableNowork);  // 未完成
     tableWidget2dat(pathFinish, tableFinish);  // 已完成
     tableWidget2dat(pathDelete, tableDelete);  // 已删除
     tableWidget2dat(pathMemory, tableMemory);  // 备忘录
+
 
     // 关闭时间记录
     QSettings recordOpen(QString("%1\\config\\zRecord.dat").arg(exePath), QSettings::IniFormat);

@@ -1,13 +1,13 @@
-%% columnCount                          %% 4                                    
-%% columnWidth                          %% 125                                  %% 20                                   %% 43                                   %% 43                                   
-%% horizontalHeaderItem                 %% 内容                                 %% 级                                   %% 创建                                 %% 完成                                 
-%% test                                 
-%% test                                 
-%% test                                 
-%% test                                 
-%% test                                 
-%% test                                 
-%% test                                 
-%% 1                                    %% 任务1                                %% 1                                    %% 200111                               %% 200111                               
-%% 1                                    %% 任务2                                %% 2                                    %% 200111                               %% 200111                               
-%% 1                                    %% 任务3                                %% 3                                    %% 200111                               %% 200111                               
+%% columnCount                                              %% 4                                                        
+%% columnWidth                                              %% 603                                                      %% 25                                                       %% 43                                                       %% 43                                                       
+%% horizontalHeaderItem                                     %% 内容                                                     %% 级                                                       %% 创建                                                     %% 完成                                                     
+%% test                                                     
+%% test                                                     
+%% test                                                     
+%% test                                                     
+%% test                                                     
+%% test                                                     
+%% test                                                     
+%% 1                                                        %% 任务1                                                    %% 01                                                       %% 200111                                                   %% 200111                                                   
+%% 1                                                        %% 任务2                                                    %% 02                                                       %% 200111                                                   %% 200111                                                   
+%% 1                                                        %% 任务3                                                    %% 03                                                       %% 200111                                                   %% 200111                                                   

@@ -1,41 +1,41 @@
 /*
-    ÎÄµµÉùÃ÷£ºÖ£¿­Åô
-    Õâ¸öÎÄµµµÄÖ÷Òª¹¦ÄÜÊÇ½« QTableWidget ºÍ QList<QStringList> Êı¾İ»¥Ïà×ª»»
-    QTableWidget ×ª QList<QStringList>µÄĞ­Òé£º
-    1.QStringList µÄµÚÒ»ĞĞÊı¾İ´ú±íËûµÄÍ·ÉùÃ÷
-    2.QStringList µÄµÚÒ»¸öÊı¾İÎª0ÔòºöÂÔµ¼Èë£¬¿ÉÒÔÔÚÍâ²¿ÎÄ¼şÖĞÓÃÀ´×ö×¢ÊÍ£¬²»¹ıµ¼³öºó¾ÍÃ»ÓĞÁË
-    3.QStringList µÄµÚÒ»¸öÊı¾İÊı¾İÎªÖ®ÄÜ±ÈÉÏ´ÎµÄ´ó1£¬³¬¹ı°´1´¦Àí
-    4.datÖĞµÄµÚÒ»ÁĞÊı¾İÃ»ÓÃ
+    æ–‡æ¡£å£°æ˜ï¼šéƒ‘å‡¯é¹
+    è¿™ä¸ªæ–‡æ¡£çš„ä¸»è¦åŠŸèƒ½æ˜¯å°† QTableWidget å’Œ QList<QStringList> æ•°æ®äº’ç›¸è½¬æ¢
+    QTableWidget è½¬ QList<QStringList>çš„åè®®ï¼š
+    1.QStringList çš„ç¬¬ä¸€è¡Œæ•°æ®ä»£è¡¨ä»–çš„å¤´å£°æ˜
+    2.QStringList çš„ç¬¬ä¸€ä¸ªæ•°æ®ä¸º0åˆ™å¿½ç•¥å¯¼å…¥ï¼Œå¯ä»¥åœ¨å¤–éƒ¨æ–‡ä»¶ä¸­ç”¨æ¥åšæ³¨é‡Šï¼Œä¸è¿‡å¯¼å‡ºåå°±æ²¡æœ‰äº†
+    3.QStringList çš„ç¬¬ä¸€ä¸ªæ•°æ®æ•°æ®ä¸ºä¹‹èƒ½æ¯”ä¸Šæ¬¡çš„å¤§1ï¼Œè¶…è¿‡æŒ‰1å¤„ç†
+    4.datä¸­çš„ç¬¬ä¸€åˆ—æ•°æ®æ²¡ç”¨
 
-    4.Ç°10ĞĞÓÃÓÚ²ÎÊıµ¼Èë£¬²»×÷ÎªÊ÷µÄÄÚÈİ
-    4.1.µÚ1ĞĞ±£´æÁĞ¸öÊı£¬×îĞ¡Îª3
-    4.2.µÚ2ĞĞ±£´æÃ¿ÁĞµÄ¿í¶È£¬×îĞ¡Îª20
-    4.3.µÚ3ĞĞ±£´æÃ¿ĞĞµÄ±íÍ·Ãû
+    4.å‰10è¡Œç”¨äºå‚æ•°å¯¼å…¥ï¼Œä¸ä½œä¸ºæ ‘çš„å†…å®¹
+    4.1.ç¬¬1è¡Œä¿å­˜åˆ—ä¸ªæ•°ï¼Œæœ€å°ä¸º3
+    4.2.ç¬¬2è¡Œä¿å­˜æ¯åˆ—çš„å®½åº¦ï¼Œæœ€å°ä¸º20
+    4.3.ç¬¬3è¡Œä¿å­˜æ¯è¡Œçš„è¡¨å¤´å
 */
 #include "strlist2tableWidget.h"
 #include <QHeaderView>
 
 #include <QDebug>
-// ½« ±í ×ªÎª listAll
+// å°† è¡¨ è½¬ä¸º listAll
 void tableWidget2listAll(QTableWidget *table,QList<QStringList> *listAll)
 {
     QStringList strlist;
 
-    // 1.¶Ô±íµÄ»ù±¾²ÎÊı±£´æ
-    // 1.1.±£´æÁĞ¸öÊı
+    // 1.å¯¹è¡¨çš„åŸºæœ¬å‚æ•°ä¿å­˜
+    // 1.1.ä¿å­˜åˆ—ä¸ªæ•°
     listAll->clear();
     strlist.clear();
     strlist.append("columnCount");
     strlist.append(QString::number(table->columnCount()));
     listAll->append(strlist);
 
-    // 1.2.±£´æÁĞ¿í¶È
+    // 1.2.ä¿å­˜åˆ—å®½åº¦
     strlist.clear();
     strlist.append("columnWidth");
     for(int index = 0;index < table->columnCount();index++)
         strlist.append(QString::number(table->columnWidth(index)));
     listAll->append(strlist);
-    // 1.3.±£´æ±íÍ·Ãû×Ö
+    // 1.3.ä¿å­˜è¡¨å¤´åå­—
     strlist.clear();
     strlist.append("horizontalHeaderItem");
     for(int index=0;index<table->columnCount();index++)
@@ -47,40 +47,40 @@ void tableWidget2listAll(QTableWidget *table,QList<QStringList> *listAll)
             strlist.append(item->text());
     }
     listAll->append(strlist);
-    // 1.4.Ô¤Áô
+    // 1.4.é¢„ç•™
     strlist.clear();
     strlist<<"test";
     listAll->append(strlist);
-    // 1.5.Ô¤Áô
+    // 1.5.é¢„ç•™
     strlist.clear();
     strlist<<"test";
     listAll->append(strlist);
-    // 1.6.Ô¤Áô
+    // 1.6.é¢„ç•™
     strlist.clear();
     strlist<<"test";
     listAll->append(strlist);
-    // 1.7.Ô¤Áô
+    // 1.7.é¢„ç•™
     strlist.clear();
     strlist<<"test";
     listAll->append(strlist);
-    // 1.8.Ô¤Áô
+    // 1.8.é¢„ç•™
     strlist.clear();
     strlist<<"test";
     listAll->append(strlist);
-    // 1.9.Ô¤Áô
+    // 1.9.é¢„ç•™
     strlist.clear();
     strlist<<"test";
     listAll->append(strlist);
-    // 1.10.Ô¤Áô
+    // 1.10.é¢„ç•™
     strlist.clear();
     strlist<<"test";
     listAll->append(strlist);
-    // 2.½«±í¸ñµÄºáÏòÊı¾İ ¶ÁÈ¡µ½ listAll ÖĞ
-
+    // 2.å°†è¡¨æ ¼çš„æ¨ªå‘æ•°æ® è¯»å–åˆ° listAll ä¸­
+    if (table->rowCount() == 0)table->insertRow(0);// 2.3.ä¸€è¡Œéƒ½æ²¡æœ‰å°±ç©ºä¸€è¡Œ
     for(int row = 0;row < table->rowCount();row++)
     {
         strlist.clear();
-        strlist.append("1");                                // ¼æÈİĞ­Òé£¬µÚÒ»¸öÊı¾İ¹Ì¶¨Îª1
+        strlist.append("1");                                // å…¼å®¹åè®®ï¼Œç¬¬ä¸€ä¸ªæ•°æ®å›ºå®šä¸º1
         for(int column = 0;column < table->columnCount();column++)
         {
             QTableWidgetItem *item = table->item(row,column);
@@ -88,35 +88,35 @@ void tableWidget2listAll(QTableWidget *table,QList<QStringList> *listAll)
             if((item == NULL)||(item->text() == NULL))
                 strlist.append(" ");
             else
-                strlist.append(item->text().replace('\n', "\\n"));  // Ìæ»»Îª¿ÉÊ¶±ğÎÄ×Ö
+                strlist.append(item->text().replace('\n', "\\n"));  // æ›¿æ¢ä¸ºå¯è¯†åˆ«æ–‡å­—
         }
         listAll->append(strlist);
     }
 }
-// ½« listAll ×ªÎª±í
+// å°† listAll è½¬ä¸ºè¡¨
 bool listAll2tableWidget(QTableWidget *table,QList<QStringList> *listAll)
 {
     QStringList strlist;
     QString str;
     int columnCount;
-    // 1.0.Çå¿Õ
+    // 1.0.æ¸…ç©º
     table->clear();
-    // 1.1.ÉèÖÃÈ«±í¸ñµÄÄ¬ÈÏ×ÖÌå 
-    table->setFont(QFont("SimSun",9)); //  SimSun ÊÇËÎÌå
-    // 1.2.±íÍ·ÊôĞÔÄ¬ÈÏÉèÖÃ
-    table->horizontalHeader()->setStyleSheet("QHeaderView::section{background: rgb(200, 200, 200) }");	// ÉèÖÃ±êÌâÑÕÉ«
-    table->horizontalHeader()->setFixedHeight(20);// ÉèÖÃĞĞ±íÍ·¹Ì¶¨¸ß¶È
-    table->verticalHeader()->setStyleSheet("QHeaderView::section{background: rgb(200, 200, 200) }");	// ÉèÖÃ±êÌâÑÕÉ«
-    table->verticalHeader()->setFixedWidth(30); // ÉèÖÃÁĞ±íÍ·¹Ì¶¨¿í¶È
-    // 1.3.ÅĞ¶ÏÊäÈë³ö´í
+    // 1.1.è®¾ç½®å…¨è¡¨æ ¼çš„é»˜è®¤å­—ä½“ 
+    table->setFont(QFont("SimSun",9)); //  SimSun æ˜¯å®‹ä½“
+    // 1.2.è¡¨å¤´å±æ€§é»˜è®¤è®¾ç½®
+    table->horizontalHeader()->setStyleSheet("QHeaderView::section{background: rgb(200, 200, 200) }");	// è®¾ç½®æ ‡é¢˜é¢œè‰²
+    table->horizontalHeader()->setFixedHeight(25);// è®¾ç½®è¡Œè¡¨å¤´å›ºå®šé«˜åº¦
+    table->verticalHeader()->setStyleSheet("QHeaderView::section{background: rgb(200, 200, 200) }");	// è®¾ç½®æ ‡é¢˜é¢œè‰²
+    table->verticalHeader()->setFixedWidth(35); // è®¾ç½®åˆ—è¡¨å¤´å›ºå®šå®½åº¦
+    // 1.3.åˆ¤æ–­è¾“å…¥å‡ºé”™
     if(listAll->size()<10)
         return false;
-    // 2.1.ÉèÖÃÁĞ¸öÊı->×îÉÙÓĞ3¸ö
+    // 2.1.è®¾ç½®åˆ—ä¸ªæ•°->æœ€å°‘æœ‰3ä¸ª
     strlist.clear();
-    strlist.append(listAll->takeFirst());                       // È¡×ß
+    strlist.append(listAll->takeFirst());                       // å–èµ°
     if(strlist.takeFirst() != "columnCount")
     {
-        // Ã»ÓĞ¹Ø¼ü×Ö
+        // æ²¡æœ‰å…³é”®å­—
         qDebug()<<QString("no key") + QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__);
         return false;
     }
@@ -124,72 +124,69 @@ bool listAll2tableWidget(QTableWidget *table,QList<QStringList> *listAll)
     columnCount = str.toInt();
     if(columnCount<3)columnCount=3;
     table->setColumnCount(columnCount);
-    // 2.2.À­ÉìÊôĞÔºÍÁĞ¿í
+    // 2.2.æ‹‰ä¼¸å±æ€§å’Œåˆ—å®½
     strlist.clear();
-    strlist.append(listAll->takeFirst());                // È¡×ß
+    strlist.append(listAll->takeFirst());                // å–èµ°
     if(strlist.takeFirst()!="columnWidth")
-    {// Ã»ÓĞ¹Ø¼ü×Ö
+    {// æ²¡æœ‰å…³é”®å­—
         qDebug()<<QString("no key") + QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__);
         return false;
     }
+
     for(int column = 0;column < strlist.size();column++)
     {
-        if(column>=table->columnCount()){ break;}// ÁĞÊı¾İÃ»ÓĞÊµ¼ÊµÄ¶à£¬Ìø³ö
+        if(column>=table->columnCount()){ break;}// åˆ—æ•°æ®æ²¡æœ‰å®é™…çš„å¤šï¼Œè·³å‡º
         int width=strlist.at(column).toInt();
         if(width<20)width=20;
         table->setColumnWidth(column,width);
         table->horizontalHeader()->setSectionResizeMode(column,QHeaderView::Interactive);
     }
-    // ×îºóÁ½¸ö²»ÄÜÀ­Éì->×îºóÁ½¸ö¹Ì¶¨Îª20 - d200107_È¡Ïû
-//    table->horizontalHeader()->setSectionResizeMode(table->columnCount()-2,QHeaderView::Fixed);
-//    table->horizontalHeader()->setSectionResizeMode(table->columnCount()-1,QHeaderView::Fixed);
-//    table->setColumnWidth(table->columnCount()-2,20);
-//    table->setColumnWidth(table->columnCount()-1,20);
-
-    // 2.3.ÉèÖÃÍ·±êÌâ
+    // 2.3.ä¸€è¡Œéƒ½æ²¡æœ‰å°±ç©ºä¸€è¡Œ
+    if (table->rowCount() == 0)table->insertRow(0);
+    // 2.3.è®¾ç½®å¤´æ ‡é¢˜
     strlist.clear();
-    strlist.append(listAll->takeFirst());        // È¡×ß
+    strlist.append(listAll->takeFirst());        // å–èµ°
     if(strlist.takeFirst()!="horizontalHeaderItem")
     {
         qDebug()<<QString("no key") + QString::fromLocal8Bit(__FILE__)+QString("\r\n")+QString::number(__LINE__)+QString("\r\n")+QString::fromLocal8Bit(__FUNCTION__);
-        // Ã»ÓĞ¹Ø¼ü×Ö
+        // æ²¡æœ‰å…³é”®å­—
         return false;
     }
     table->setHorizontalHeaderLabels(strlist);
 
-    // 2.4.Ô¤Áô
-    strlist.append(listAll->takeFirst());        // È¡×ß
-    // 2.5.Ô¤Áô
-    strlist.append(listAll->takeFirst());        // È¡×ß
-    // 2.6.Ô¤Áô
-    strlist.append(listAll->takeFirst());        // È¡×ß
-    // 2.7.Ô¤Áô
-    strlist.append(listAll->takeFirst());        // È¡×ß
-    // 2.8.Ô¤Áô
-    strlist.append(listAll->takeFirst());        // È¡×ß
-    // 2.9.Ô¤Áô
-    strlist.append(listAll->takeFirst());        // È¡×ß
-    // 2.10.Ô¤Áô
-    strlist.append(listAll->takeFirst());        // È¡×ß
+    // 2.4.é¢„ç•™
+    strlist.append(listAll->takeFirst());        // å–èµ°
+    // 2.5.é¢„ç•™
+    strlist.append(listAll->takeFirst());        // å–èµ°
+    // 2.6.é¢„ç•™
+    strlist.append(listAll->takeFirst());        // å–èµ°
+    // 2.7.é¢„ç•™
+    strlist.append(listAll->takeFirst());        // å–èµ°
+    // 2.8.é¢„ç•™
+    strlist.append(listAll->takeFirst());        // å–èµ°
+    // 2.9.é¢„ç•™
+    strlist.append(listAll->takeFirst());        // å–èµ°
+    // 2.10.é¢„ç•™
+    strlist.append(listAll->takeFirst());        // å–èµ°
 
-    // 3.½«ÎÄ¼şÄÚÈİ×ª»»³Étable
+    // 3.å°†æ–‡ä»¶å†…å®¹è½¬æ¢æˆtable
     QTableWidgetItem *item;
     qDebug()<< "listAll->size() = " << listAll->size();
-    table->setRowCount(listAll->size());        // ÉèÖÃÁĞ¸öÊı
+    table->setRowCount(listAll->size());        // è®¾ç½®åˆ—ä¸ªæ•°
     for(int row=0;row<listAll->size();row++)
     {
         strlist.clear();
         strlist.append(listAll->at(row));
-        strlist.removeFirst();                      // ¸ù¾İĞ­Òé£¬µÚÒ»¸öÊı¾İÎŞĞ§
+        strlist.removeFirst();                      // æ ¹æ®åè®®ï¼Œç¬¬ä¸€ä¸ªæ•°æ®æ— æ•ˆ
         for(int column=0;column<strlist.size();column++)
         {
             if(column>=table->columnCount()){break;}
             str = strlist.at(column);
             str = str.replace(QString("\\n"), QString("\n"));
-            item = new QTableWidgetItem(str);// ·´Ìæ»»
+            item = new QTableWidgetItem(str);// åæ›¿æ¢
             table->setItem(row,column,item);
-            /*¸ù¾İÄÚÈİµ÷ÕûĞĞ¸ß¶È*/
-            int h = (str.length() - str.remove('\n').length() + 1) * 13;  // 13 ºÍ×Ö·û¸ñÊ½ÓĞ¹ØµÄ£¬ÓÃµÄÊÇ×Ö·û£ºËÎÌå9pt
+            /*æ ¹æ®å†…å®¹è°ƒæ•´è¡Œé«˜åº¦*/
+            int h = (str.length() - str.remove('\n').length() + 1) * 16;  // 15 å’Œå­—ç¬¦æ ¼å¼æœ‰å…³çš„ï¼Œç”¨çš„æ˜¯å­—ç¬¦ï¼šå®‹ä½“9pt
             table->setRowHeight(row, qMax(h, table->rowHeight(row)));
         }
     }

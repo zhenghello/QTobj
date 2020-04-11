@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = Anyone
 TEMPLATE = app
 
-RC_ICONS = happy.ico   # Í¼±ê
+RC_ICONS = happy.ico   # ico
 
 
 # head file path

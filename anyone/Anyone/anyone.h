@@ -17,7 +17,11 @@ public:
     ~AnyOne();
 
 private slots:
+    // 点击图标操作
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
+    // 结束按键
     void on_pushButton_end_clicked();
+    //
     void on_b1_clicked();
     void on_b2_clicked();
     void on_b3_clicked();

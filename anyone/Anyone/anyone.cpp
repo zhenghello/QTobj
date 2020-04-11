@@ -1,6 +1,6 @@
 ﻿#include "anyone.h"
 #include "ui_anyone.h"
-
+//#include "stdio.h"
 
 QTimer  myTimer;
 AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
@@ -8,9 +8,9 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     ui->setupUi(this);
 
     // 初始化外部器件
-    mydebug = Fdebug::myDebug();
+    mydebug = Fdebug::myDebug();    // 如果想要qDebug的打印信息，就用 myqDebug
     mydebug->show();// 如果没个归属就会关闭不掉
-
+    ui->verticalLayout_debug->addWidget(mydebug);
     // 右下角小图标功能
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(QIcon(":/one/icon/happy.ico"));
@@ -22,6 +22,7 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     connect(&myTimer,SIGNAL(timeout()),this,SLOT(myTimerOut()));
     myTimer.start(1000);
 
+    ui->label_buildTime->setText(QString("building time:%1 %2").arg(__DATE__).arg(__TIME__));   // 编译的时候固定了，后面就不会变
 }
 AnyOne::~AnyOne()
 {
@@ -33,7 +34,24 @@ void AnyOne::myTimerOut()
     static int c=0;
     qDebug()<<"c="<<c++;
 }
-
+// 点击小图标的操作 -> 激活程序
+void AnyOne::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    if (isHidden())
+    {
+        show();             // 显示
+        activateWindow();   // 激活，显示到最前端
+        raise();            // 提到最前面
+    }
+    else
+    {
+        hide();
+    }
+    if (reason)// 不想看到报警
+    {
+        ;
+    }
+}
 // 关闭窗体
 void AnyOne::on_pushButton_end_clicked()
 {

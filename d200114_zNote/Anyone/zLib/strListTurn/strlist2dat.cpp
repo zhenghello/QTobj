@@ -13,6 +13,7 @@ bool dat2ListAll(QString datName,QList<QStringList> *listAll)
     // 1.打开文件
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
+        qDebug()<<" dat2ListAll-> open dat fail!";
         return false;
     }
     listAll->clear();
@@ -45,7 +46,7 @@ bool ListAll2dat(QString datName,QList<QStringList> *listAll)
     QFile       file(datName); // 文件handle
     if(!file.open(QIODevice::WriteOnly | QIODevice::Text))// 打开文件
     {
-        qDebug()<<" open dat fail!";
+        qDebug()<<" ListAll2dat-> open dat fail!";
         return false;
     }
     QString str;
