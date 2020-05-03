@@ -1,0 +1,3 @@
+这个文件下的文件，可以自由得在excel dat tableWidget treeWidget 4种格式之间转换
+但是每种的保存格式是有固定限制的，为的是在QT中可以自由使用tableWidget treeWidget 这两种格式，同时自由导出和导入excel dat格式。
+excel的导入和导出是很花费时间的。

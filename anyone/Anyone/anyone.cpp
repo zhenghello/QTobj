@@ -16,7 +16,8 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     trayIcon->setIcon(QIcon(":/one/icon/happy.ico"));
     trayIcon->show();
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-
+    // 初始化路径 - 全局通用
+    exePath = QCoreApplication::applicationDirPath().replace("/", "\\");
     dat_config_load();  // 文件导入
 
     connect(&myTimer,SIGNAL(timeout()),this,SLOT(myTimerOut()));
@@ -120,14 +121,16 @@ void AnyOne::on_b103_clicked()
 //备注：
 void AnyOne::dat_config_save(void)
 {
-    QSettings save_config(QString("%1\\config\\AllConfig.dat").arg(exePath), QSettings::IniFormat);
+    QString str = QString("%1\\config\\AllConfig.dat").arg(exePath);
+    qDebug()<<"D:dat_config_save "<<str;
+    QSettings save_config(str, QSettings::IniFormat);
+
     save_config.setIniCodec("GB2312");          //支持中文
     save_config.remove(windowTitle());          // 删除组
     save_config.beginGroup(windowTitle());      // 组操作------------------------------------------begin
     save_config.setValue ("have_config"        ,true);
 
     // ------------------------ 配置的保存 ------------------------
-
 
     save_config.endGroup();                    // 组操作------------------------------------------end
 
@@ -139,7 +142,10 @@ void AnyOne::dat_config_save(void)
 void AnyOne::dat_config_load(void)
 {
     // 打开时间记录
-    QSettings recordOpen(QString("%1\\config\\zRecord.dat").arg(exePath), QSettings::IniFormat);
+    QString str = QString("%1\\config\\AllConfig.dat").arg(exePath);
+    qDebug()<<"D:dat_config_load "<<str;
+
+    QSettings recordOpen(str, QSettings::IniFormat);
     recordOpen.setValue(QDateTime::currentDateTime().toString("yyyy-MM-dd--hh-mm-ss"),"");//时间串
 
     QSettings load_config(QString("%1\\config\\AllConfig.dat").arg(exePath), QSettings::IniFormat);// 统一配置地址
