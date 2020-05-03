@@ -2,7 +2,6 @@
 #include "ui_anyone.h"
 //#include "stdio.h"
 
-QTimer  myTimer;
 AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
 {
     ui->setupUi(this);
@@ -11,15 +10,18 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     mydebug = Fdebug::myDebug();    // 如果想要qDebug的打印信息，就用 myqDebug
     mydebug->show();// 如果没个归属就会关闭不掉
     ui->verticalLayout_debug->addWidget(mydebug);
+
     // 右下角小图标功能
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setIcon(QIcon(":/one/icon/happy.ico"));
     trayIcon->show();
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+
     // 初始化路径 - 全局通用
     exePath = QCoreApplication::applicationDirPath().replace("/", "\\");
     dat_config_load();  // 文件导入
 
+    // 定时器
     connect(&myTimer,SIGNAL(timeout()),this,SLOT(myTimerOut()));
     myTimer.start(1000);
 
@@ -30,6 +32,7 @@ AnyOne::~AnyOne()
     dat_config_save();
     delete ui;
 }
+// 定时显示的功能
 void AnyOne::myTimerOut()
 {
     static int c=0;
@@ -87,11 +90,7 @@ void AnyOne::on_b5_clicked()
 {
 
 }
-// 点击“b6”
-void AnyOne::on_b6_clicked()
-{
 
-}
 // 点击“文件名”
 void AnyOne::on_b101_clicked()
 {
@@ -112,6 +111,12 @@ void AnyOne::on_b103_clicked()
     QString str1 = "explorer " + ui->lineEdit->text();
     QProcess::execute(str1);
 }
+// 打开当前文件夹
+void AnyOne::on_b104_clicked()
+{
+    QString str1 = "explorer " + exePath;
+    QProcess::execute(str1);
+}
 
 
 // ******************************************** 数据保存 ******************************************** begin
@@ -121,7 +126,15 @@ void AnyOne::on_b103_clicked()
 //备注：
 void AnyOne::dat_config_save(void)
 {
-    QString str = QString("%1\\config\\AllConfig.dat").arg(exePath);
+    // 关闭时间记录
+    QString str = QString("%1\\config\\openRecord.dat").arg(exePath);
+    qDebug()<<"D:openRecord: "<<str;
+    QSettings recordOpen(str, QSettings::IniFormat);
+    str = QDateTime::currentDateTime().toString("yyyy-MM-dd--hh-mm-ss");//时间串
+    recordOpen.setValue(str,"colseTime");
+
+    // 保存配置
+    str = QString("%1\\config\\AllConfig.dat").arg(exePath);
     qDebug()<<"D:dat_config_save "<<str;
     QSettings save_config(str, QSettings::IniFormat);
 
@@ -142,13 +155,17 @@ void AnyOne::dat_config_save(void)
 void AnyOne::dat_config_load(void)
 {
     // 打开时间记录
-    QString str = QString("%1\\config\\AllConfig.dat").arg(exePath);
-    qDebug()<<"D:dat_config_load "<<str;
-
+    QString str = QString("%1\\config\\openRecord.dat").arg(exePath);
+    qDebug()<<"D:openRecord: "<<str;
     QSettings recordOpen(str, QSettings::IniFormat);
-    recordOpen.setValue(QDateTime::currentDateTime().toString("yyyy-MM-dd--hh-mm-ss"),"");//时间串
+    str = QDateTime::currentDateTime().toString("yyyy-MM-dd--hh-mm-ss");//时间串
+    recordOpen.setValue(str,"openTime");
 
-    QSettings load_config(QString("%1\\config\\AllConfig.dat").arg(exePath), QSettings::IniFormat);// 统一配置地址
+    // 导入配置
+    str = QString("%1\\config\\AllConfig.dat").arg(exePath);
+    qDebug()<<"D:AllConfig: "<<str;
+    QSettings load_config(str, QSettings::IniFormat);// 统一配置地址
+
     load_config.setIniCodec("GB2312");  // 支持中文
     load_config.beginGroup(windowTitle());              // 组操作------------------------------------------begin
     //判断文件存在
@@ -157,13 +174,6 @@ void AnyOne::dat_config_load(void)
         QMessageBox::warning(NULL, QString("Loading Error"),windowTitle() + " no file!");
         return;
     }
-
     // ------------------------ 配置的读取 ------------------------
-
-
     load_config.endGroup();                            // 组操作------------------------------------------end
 }
-
-
-
-

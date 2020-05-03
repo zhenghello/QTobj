@@ -27,15 +27,17 @@ private slots:
     void on_b3_clicked();
     void on_b4_clicked();
     void on_b5_clicked();
-    void on_b6_clicked();
 
     void on_b101_clicked();
     void on_b102_clicked();
     void on_b103_clicked();
 
     void myTimerOut();
+
+    void on_b104_clicked();
+
 private:
-    Ui::AnyOne *ui;
+    QTimer  myTimer;
 
     Fdebug *mydebug;
     QString exePath;                // 可执行文件的路径,即使在其他位置启动，也可以正常找到配置文件
@@ -43,6 +45,7 @@ private:
 
     void dat_config_save(void);
     void dat_config_load(void);
+    Ui::AnyOne *ui;
 };
 
 #endif // ANYONE_H
