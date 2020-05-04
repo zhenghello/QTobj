@@ -39,6 +39,8 @@ private slots:
     void on_button_start_clicked();
 
 
+    void on_button_one_clicked();
+
 private:
     Ui::AnyOne *ui;
     QTimer  myTimer;

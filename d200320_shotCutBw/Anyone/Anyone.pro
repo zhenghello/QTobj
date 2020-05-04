@@ -8,14 +8,14 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET   = Xn1000ShotScreen
+TARGET   = Xn1000ShotScreen2
 TEMPLATE = app
 
 RC_ICONS = happy.ico   # ico
 
-
 # head file path
-INCLUDEPATH += ./zLib/fdebug/
+INCLUDEPATH += ./zLib/fdebug/ \
+               ./qxtglobalshortcut5/gui/
 
 SOURCES += main.cpp\
         anyone.cpp \
@@ -29,5 +29,8 @@ FORMS    += anyone.ui \
 
 RESOURCES += \
     anyone.qrc
+
+include(./qxtglobalshortcut5/qxt.pri)
+
 
 

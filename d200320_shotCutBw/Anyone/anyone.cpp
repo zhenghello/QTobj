@@ -3,6 +3,7 @@
 #include "windows.h"
 #include<QImage>
 
+#include "qxtglobalshortcut.h"
 
 AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
 {
@@ -12,16 +13,30 @@ AnyOne::AnyOne(QWidget *parent):QMainWindow(parent),ui(new Ui::AnyOne)
     mydebug = Fdebug::myqDebug();    // 如果想要qDebug的打印信息，就用 myqDebug
     mydebug->show();// 如果没个归属就会关闭不掉
     ui->verticalLayout_debug->addWidget(mydebug);
-
 //    dat_config_load();  // 文件导入
-
+//    ui->button_one->setShortcut(QKeySequence(QLatin1String("pause"))); // 这种写法只有软件在最前面才能触发
     connect(&myTimer,SIGNAL(timeout()),this,SLOT(myTimerOut()));
+
+    QxtGlobalShortcut *shortcut = new QxtGlobalShortcut(this);
+    if(shortcut->setShortcut(QKeySequence("pause")))
+    {
+        connect(shortcut, SIGNAL(activated()),this,SLOT(on_button_one_clicked()));
+        qDebug()<<"快捷键已启用";
+    }
+    else
+    {
+        qDebug()<<"快捷键已占用";
+    }
+
 }
 AnyOne::~AnyOne()
 {
 //    dat_config_save();
     delete ui;
 }
+
+
+// 定时截取屏幕
 void AnyOne::myTimerOut()
 {
     if(ui->spinBox_CutCountResidual->value() > 0)
@@ -60,7 +75,6 @@ void AnyOne::myTimerOut()
         qDebug()<<"finish";
         showNormal();       // 切回正常显示状态
         ui->button_start->setText("start");
-
     }
 }
 
@@ -89,7 +103,23 @@ void AnyOne::on_button_start_clicked()
     myTimer.start(ui->spinBox_timeInterval->value());                       // 启动时间间隔
     ui->button_start->setText("runing,click stop!");
 }
+// 点击“”- 单次截图 -- 只能是时间顺序
+void AnyOne::on_button_one_clicked()
+{
+    QString strPath = ui->lineEdit_SavePath->text();
+    saveBit s1 = saveBit::BW;
+    imgType s2 = imgType::PNG;
+    if(ui->radioButton_rgb->isChecked()) s1 = saveBit::RGB;
+    if(ui->radioButton_gray->isChecked())s1 = saveBit::GRAY;
+    if(ui->radioButton_bw->isChecked())  s1 = saveBit::BW;
+    if(ui->radioButton_bmp->isChecked()) s2 = imgType::BMP;
+    if(ui->radioButton_jpg->isChecked()) s2 = imgType::JPG;
+    if(ui->radioButton_png->isChecked()) s2 = imgType::PNG;
 
+    QString strName = ui->lineEdit_prefix->text();
+    strName += QDateTime::currentDateTime().toString("yyMMddhhmmsszzz");
+    cutAllScreen(strPath,strName, s1,s2);
+}
 // 更改文件夹
 void AnyOne::on_button_SelectSavePath_clicked()
 {
@@ -264,6 +294,8 @@ void AnyOne::dat_config_load(void)
 
     load_config.endGroup();                            // 组操作------------------------------------------end
 }
+
+
 
 
 
